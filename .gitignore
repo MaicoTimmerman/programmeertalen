@@ -3,11 +3,13 @@
 #Ignores for filetypes
 #ignore college files
 *.pdf
+*.ppt?
 *.ppt
 *.odt
 *.doc?
-#ignore class files
+#ignore compiled files
 *.class
+*.py[cod]
 #ignore containers
 *.tar
 *.tar.gz
