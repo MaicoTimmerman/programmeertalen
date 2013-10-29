@@ -1,3 +1,12 @@
+##
+#   NAAM    : Maico Timmerman
+#   CKNUM   : 10542590
+#   Studie  : Informatica
+#
+#   Judicium.py
+#       This program prints the mark with judicium suffix.
+#       e.g. Uitslag: 8.5 (Cum Laude)
+##
 def judicium(mark):
     if float(mark)<5.5:
     	suffix="(Failed)"
