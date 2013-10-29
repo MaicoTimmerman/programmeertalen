@@ -13,6 +13,7 @@
 *.tar.gz
 #ignore executables
 *.sh
+*.exe
 #ignore backup files
 *~
 *.BAK
