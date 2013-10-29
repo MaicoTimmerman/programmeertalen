@@ -1,1 +1,18 @@
+#Git ignore list for inleiding programmeren
 
+#ignore pdf files
+*.pdf
+#ignore class files
+*.class
+#ignore containers
+*.tar
+*.tar.gz
+#ignore executables
+*.sh
+#ignore backup files
+*~
+*.BAK
+
+#ignore inleveren
+week?/inleveren
+~
