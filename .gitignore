@@ -1,7 +1,11 @@
 #Git ignore list for inleiding programmeren
 
-#ignore pdf files
+#Ignores for filetypes
+#ignore college files
 *.pdf
+*.ppt
+*.odt
+*.doc?
 #ignore class files
 *.class
 #ignore containers
@@ -13,6 +17,7 @@
 *~
 *.BAK
 
+#Ignores for directories
 #ignore inleveren
 week?/inleveren
 ~
