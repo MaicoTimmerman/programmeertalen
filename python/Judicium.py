@@ -7,6 +7,8 @@
 #       This program prints the mark with judicium suffix.
 #       e.g. Uitslag: 8.5 (Cum Laude)
 ##
+
+
 def judicium(mark):
     if float(mark)<5.5:
     	suffix="(Failed)"
@@ -24,4 +26,3 @@ judicium(8.4)
 judicium(7.5)
 judicium(7.4)
 judicium(5)
-
