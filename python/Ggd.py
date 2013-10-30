@@ -1,3 +1,13 @@
+##
+#   NAAM    : Maico Timmerman
+#   CKNUM   : 10542590
+#   Studie  : Informatica
+#
+#   Ggd.py
+#       This program prints ggd of two numbers.
+#       e.g. De ggd van 5 en 15: 5
+##
+
 def ggd(a, b):
     while b != 0:
         a,b = b, a % b
