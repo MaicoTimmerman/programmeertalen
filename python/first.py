@@ -18,11 +18,12 @@ def judicium():
 		print 'Dit is geen getal!'
 		print
 		return
-	if float(getal)<5.5:
+
+	if getal<5.5:
 		suffix="(Failed)"
-	elif float(getal)>=8.5:
+	elif getal>=8.5:
 		suffix="(Cum Laude)"
-	elif float(getal)>= 7.5 and float(getal)<8.5:
+	elif getal>= 7.5 and getal<8.5:
 		suffix="(With Honors)"
 	else:
 		suffix=""
@@ -37,12 +38,15 @@ def ggd():
 	except ValueError:
 		print 'Dit is geen getal!'
 		return
+
 	while b != 0:
 		a,b = b, a % b
 	print a
 
+#
 def main():
 	judicium()
 	ggd()
 
-main()
+if __name__ == '__main__':
+	main()
