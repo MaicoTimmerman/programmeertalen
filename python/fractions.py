@@ -89,7 +89,7 @@ class ComplexFraction:
 	#Returns the result of self * cf2 as ComplexFraction.
 	def __mul__(self, cf2):
 		return ComplexFraction((self.re * cf2.re) - (self.im * cf2.im) ,
-								(self.re * cf2.im) - (self.im * cf2.re))
+								(self.re * cf2.im) + (self.im * cf2.re))
 
 	def __div__(self, cf2):
 		return self * cf2.reciproke()
