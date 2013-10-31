@@ -1,6 +1,6 @@
 from sys import exit
 class Fraction:
-
+	#Constructor with check for a nominator of zero.
 	def __init__(self, nom, den):
 		if type(nom) == int and type(den) == int:
 			if den != 0:
@@ -14,9 +14,11 @@ class Fraction:
 			print 'This isn\'t a valid Fraction.'
 			exit(0)
 
+	#Return a string in the form Fraction(x, x)
 	def __repr__(self):
 		return 'Fraction({},{})'.format(self.nom, self.den)
 
+	#Return a string in the form x / x
 	def __str__(self):
 		return '{} / {}'.format(self.nom, self.den)
 	
@@ -48,6 +50,7 @@ class Fraction:
 	def __sub__(self, f2):
 		return Fraction((self.nom * f2.den) - (f2.nom * self.den), (self.den * f2.den))
 
+#Test Fraction and ComplexFraction classes
 if __name__ == '__main__':
 	print '#Fractions:'
 	f1 = Fraction(1,6)
