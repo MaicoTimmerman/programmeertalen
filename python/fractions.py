@@ -44,9 +44,12 @@ class Fraction:
 		return Fraction(self.den, self.nom)
 
 
-	#Multiply self with Fraction f2 and return new Fraction.
-	def __mul__(self, f2):
-		return Fraction(self.nom * f2.nom, self.den * f2.den)
+	#Multiply self with Fraction other and return new Fraction.
+	def __mul__(self, other):
+		if isinstance(other, Fraction):
+			return Fraction(self.nom * other.nom, self.den * other.den)
+		elif isinstance(other, int):
+			return Fraction(self.nom * other, self.den)
 
 	#Divide self by Fraction f2 and return new Fraction.
 	def __div__(self, f2):
