@@ -15,9 +15,15 @@ class Fraction:
 	def __init__(self, nom, den):
 		if type(nom) == int and type(den) == int:
 			if den != 0:
-				a = self.getGgd(nom, den)
+				a = abs(self.getGgd(nom, den))
 				self.nom = nom / a
 				self.den = den / a
+				if self.nom < 0 and self.den < 0:
+					self.nom = abs(self.nom)
+					self.den = abs(self.den)
+				elif self.nom > 0 and den < 0:
+					self.nom = self.nom * -1
+					self.den = abs(self.den)
 			else:
 				print 'Denominator cannot be zero.'
 				exit(0)
@@ -43,26 +49,41 @@ class Fraction:
 	def reciproke(self):
 		return Fraction(self.den, self.nom)
 
+	#Returns the int as a Fraction
+	def intToFraction(self, other):
+		return Fraction(other, 1)
 
 	#Multiply self with Fraction other and return new Fraction.
 	def __mul__(self, other):
 		if isinstance(other, Fraction):
 			return Fraction(self.nom * other.nom, self.den * other.den)
 		elif isinstance(other, int):
-			return Fraction(self.nom * other, self.den)
-
-	#Divide self by Fraction f2 and return new Fraction.
-	def __div__(self, f2):
-		return Fraction(self.nom * f2.den, self.den * f2.nom)
-
-	#Add self to Fraction f2 and return new Fraction.
-	def __add__(self, f2):
-		return Fraction((self.nom * f2.den) + (f2.nom * self.den), (self.den * f2.den))
-
-	#Substract f2 from self and return new Fractions
-	def __sub__(self, f2):
-		return Fraction((self.nom * f2.den) - (f2.nom * self.den), (self.den * f2.den))
-
+			f1 = self.intToFraction(other)
+			return self * f1
+		
+	#Divide self by Fraction other and return new Fraction.
+	def __div__(self, other):
+		if isinstance(other, Fraction):
+			return Fraction(self.nom * other.den, self.den * other.nom)
+		elif isinstance(other, int):
+			f1 = self.intToFraction(other)
+			return self / f1
+		
+	#Add self to Fraction other and return new Fraction.
+	def __add__(self, other):
+		if isinstance(other, Fraction):
+			return Fraction((self.nom * other.den) + (other.nom * self.den), (self.den * other.den))
+		elif isinstance(other, int):
+			f1 = self.intToFraction(other)
+			return self + f1
+		
+	#Substract other from self and return new Fractions
+	def __sub__(self, other):
+		if isinstance(other, Fraction):
+			return Fraction((self.nom * other.den) - (other.nom * self.den), (self.den * other.den))
+		elif isinstance(other, int):
+			f1 = self.intToFraction(other)
+			return self - f1
 
 class ComplexFraction:
 	def __init__(self, re, im):
@@ -82,22 +103,47 @@ class ComplexFraction:
 		return 'ComplexFraction({},{})'.format(self.re.__repr__(), self.im.__repr__())
 
 	#Adds 2 ComplexFractions and returns the result as ComplexFraction.
-	def __add__(self, cf2):
-		return ComplexFraction(self.re + cf2.re, self.im + cf2.im)
+	def __add__(self, other):
+		if isinstance(other, ComplexFraction):
+			return ComplexFraction(self.re + other.re, self.im + other.im)
+		elif isinstance(other, Fraction):
+			return ComplexFraction(self.re + other, self.im)
+		elif isinstance(other, int):
+			return ComplexFraction(self.re + other, self.im)
 
-	#Substracts cf2 from self and returns the result as ComplexFraction.
-	def __sub__(self, cf2):
-		return ComplexFraction(self.re - cf2.re, self.im - cf2.im)
+	#Substracts other from self and returns the result as ComplexFraction.
+	def __sub__(self, other):
+		if isinstance(other, ComplexFraction):
+			return ComplexFraction(self.re - other.re, self.im - other.im)
+		elif isinstance(other, Fraction):
+			return ComplexFraction(self.re - other, self.im)
+		elif isinstance(other, int):
+			return ComplexFraction(self.re - other, self.im)
 
-	#Returns the result of self * cf2 as ComplexFraction.
-	def __mul__(self, cf2):
-		return ComplexFraction((self.re * cf2.re) - (self.im * cf2.im) ,
-								(self.re * cf2.im) + (self.im * cf2.re))
+	#Returns the result of self * other as ComplexFraction.
+	def __mul__(self, other):
+		if isinstance(other, ComplexFraction):
+			return ComplexFraction((self.re * other.re) - (self.im * other.im) ,
+								(self.re * other.im) + (self.im * other.re))
+		elif isinstance(other, Fraction):
+			return ComplexFraction(self.re * other, self.im * other)
+		elif isinstance(other, int):
+			return ComplexFraction(self.re * other, self.im * other)
 
-	def __div__(self, cf2):
-		return self * cf2.reciproke()
 
-	#Returns the result of self / cf2 as ComplexFraction.
+	#Returns the result of self / other as ComplexFraction.
+	def __div__(self, other):
+		if isinstance(other, ComplexFraction):
+			return self * other.reciproke()
+		elif isinstance(other, Fraction):
+			return ComplexFraction(self.im * other.reciproke(),
+										self.re * other.reciproke())
+		elif isinstance(other, int):
+			return self * Fraction(1, other)
+
+		returm
+
+	#Returns the reciproke ComplexFraction of self.
 	def reciproke(self):
 		p = self.re.nom
 		q = self.re.den
@@ -107,26 +153,33 @@ class ComplexFraction:
 		f2 = Fraction((-1 *(r * q * q * s)), (p * p * s * s) + (r * r * q * q))
 		return ComplexFraction(f1, f2)
 
+	#Return a pythonic complex value
+	def toComplex(self):
+		p = float(self.re.nom)
+		q = float(self.re.den)
+		r = float(self.im.nom)
+		s = float(self.im.den)
+		return complex(p/q, r/s)
+		
+
 #Test Fraction and ComplexFraction classes
 if __name__ == '__main__':
-	##
-	#	Fractions
-	##
-	print '#Fractions:'
+	print '##'
+	print '#\tFractions:'
+	print '##'
+	print
 	f1 = Fraction(1,6)
 	f2 = Fraction(1,4)
 	print 'f1: {}'.format(f1)
 	print 'f2: {}'.format(f2)
 	print 'omgekeerde f1: {}'.format(f1.reciproke())
 	print 'omgekeerde f2: {}'.format(f2.reciproke())
-	#Add and substract tests.
 	print
 	print 'f1 + f2: {}'.format(f1 + f2)
 	print 'f1 - f2: {}'.format(f1 - f2)
 	print 'f2 - f1: {}'.format(f2 - f1)
 	print 'f1 - f2 + f2: {}'.format(f1 - f2 + f2)
 	print 'f2 - f1 + f1: {}'.format(f2 - f1 + f1)
-	#Multiply and divide tests.
 	print
 	print 'f1 * f2: {}'.format(f1 * f2)
 	print 'f1 / f2: {}'.format(f1 / f2)
@@ -134,31 +187,62 @@ if __name__ == '__main__':
 	print 'f1 / f2 * f2: {}'.format(f1 / f2 * f2)
 	print 'f2 / f1 * f1: {}'.format(f2 / f1 * f1)
 	print
-	##
-	#	ComplexFractions
-	##
-	print '#Complex Fractions'
+	print '##'
+	print '#\t Fractions with integers'
+	print '##'
+	print
+	print 'f1 + 2: {}'.format(f1 + 2)
+	print 'f1 - 2: {}'.format(f1 - 2)
+	print 'f2 - 2: {}'.format(f2 - 2)
+	print 'f1 - 2 + 2: {}'.format(f1 - 2 + 2)
+	print 'f2 - 2 + 2: {}'.format(f2 - 2 + 2)
+	print
+	print 'f1 * 2: {}'.format(f1 * 2)
+	print 'f1 / 2: {}'.format(f1 / 2)
+	print 'f2 / 2: {}'.format(f2 / 2)
+	print 'f1 / 2 * 2: {}'.format(f1 / 2 * 2)
+	print 'f2 / 2 * 2: {}'.format(f2 / 2 * 2)
+	print
+	print '##'
+	print '#\tComplex Fractions'
+	print '##'
+	print
 	fr1 = Fraction(1,6)
 	fr2 = Fraction(1,4)
-	fr3 = Fraction(5,6)
-	fr4 = Fraction(2,3)
+	fr3 = Fraction(2,1)
+	fr4 = Fraction(0,1)
 	cf1 = ComplexFraction(fr1, fr2)
 	cf2 = ComplexFraction(fr3, fr4)
 	print 'cf1: {}'.format(cf1)
 	print 'cf2: {}'.format(cf2)
 	print 'omgekeerde cf1: {}'.format(cf1.reciproke())
 	print 'omgekeerde cf2: {}'.format(cf2.reciproke())
-	#Add and substract tests.
-	print
+	print 'pythonic complex cf1 {}'.format(cf1.toComplex())
+	print 'pythonic complex cf2 {}'.format(cf2.toComplex())
 	print 'cf1 + cf2: {}'.format(cf1 + cf2)
 	print 'cf1 - cf2: {}'.format(cf1 - cf2)
 	print 'cf2 - cf1: {}'.format(cf2 - cf1)
 	print 'cf1 - cf2 + cf2: {}'.format(cf1 - cf2 + cf2)
 	print 'cf2 - cf1 + cf1: {}'.format(cf2 - cf1 + cf1)
-	#Multiply and divide tests.
 	print
 	print 'cf1 * cf2: {}'.format(cf1 * cf2)
 	print 'cf1 / cf2: {}'.format(cf1 / cf2)
 	print 'cf2 / cf1: {}'.format(cf2 / cf1)
 	print 'cf1 / cf2 * cf2: {}'.format(cf1 / cf2 * cf2)
 	print 'cf2 / cf1 * cf1: {}'.format(cf2 / cf1 * cf1)
+	print
+	print '##'
+	print '#\t ComplexFractions with integers'
+	print '##'
+	print
+	print 'cf1 + 2: {}'.format(cf1 + 2)
+	print 'cf1 - 2: {}'.format(cf1 - 2)
+	print 'cf2 - cf1: {}'.format(cf2 - 2)
+	print 'cf1 - 2 + 2: {}'.format(cf1 - 2 + 2)
+	print 'cf2 - cf1 + cf1: {}'.format(cf2 - 2 + 2)
+	print
+	print 'cf1 * 2: {}'.format(cf1 * 2)
+	print 'cf1 / 2: {}'.format(cf1 / 2)
+	print 'cf2 / 2: {}'.format(cf2 / 2)
+	print 'cf1 / 2 * 2: {}'.format(cf1 / 2 * 2)
+	print 'cf2 / 2 * 2: {}'.format(cf2 / 2 * 2)
