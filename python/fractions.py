@@ -28,8 +28,7 @@ class Fraction:
 				print 'Denominator cannot be zero.'
 				exit(0)
 		else:
-			print 'This isn\'t a valid Fraction.'
-			exit(0)
+			raise ValueError('Use: Fraction(int, int)')
 
 	#Return a string in the form Fraction(x, x)
 	def __repr__(self):
@@ -86,13 +85,15 @@ class Fraction:
 			return self - f1
 
 class ComplexFraction:
-	def __init__(self, re, im):
-		if isinstance(re, Fraction) and isinstance(im, Fraction):
-			self.re = re
-			self.im = im
+	def __init__(self, args1, args2, args3=None, args4=None):
+		if isinstance(args1, Fraction) and isinstance(args2, Fraction):
+			self.re = args1
+			self.im = args2
+		elif type(args1) == int and type(args2) == int and type(args3) == int and type(args4) == int:
+			self.re = Fraction(args1, args2)
+			self.im = Fraction(args3, args4)
 		else:
-			print 'The inputs aren\'t fractions'
-			exit()
+			raise ValueError('Use: ComplexFraction(Fraction, Fraction) or ComplexFraction(int, int, int, int)')
 
 	#Returns a string in the form of (x/x) + (x/x)j
 	def __str__(self):
@@ -209,10 +210,10 @@ if __name__ == '__main__':
 	print
 	fr1 = Fraction(1,6)
 	fr2 = Fraction(1,4)
-	fr3 = Fraction(2,1)
-	fr4 = Fraction(0,1)
+	# fr3 = Fraction(2,1)
+	# fr4 = Fraction(0,1)
 	cf1 = ComplexFraction(fr1, fr2)
-	cf2 = ComplexFraction(fr3, fr4)
+	cf2 = ComplexFraction(2, 1, 0, 1)
 	print 'cf1: {}'.format(cf1)
 	print 'cf2: {}'.format(cf2)
 	print 'omgekeerde cf1: {}'.format(cf1.reciproke())
