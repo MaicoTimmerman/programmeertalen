@@ -210,14 +210,14 @@ if __name__ == '__main__':
 	print 'f1 + 2: {}'.format(f1 + 2)
 	print 'f1 - 2: {}'.format(f1 - 2)
 	print 'f2 - 2: {}'.format(f2 - 2)
-	print 'f1 - 2 + 2: {}'.format(f1 - 2 + 2)
-	print 'f2 - 2 + 2: {}'.format(f2 - 2 + 2)
+	print 'f1 - 21541 + 21541: {}'.format(f1 - 21541 + 21541)
+	print 'f2 - 21541 + 21541: {}'.format(f2 - 21541 + 21541)
 	print
 	print 'f1 * 2: {}'.format(f1 * 2)
 	print 'f1 / 2: {}'.format(f1 / 2)
 	print 'f2 / 2: {}'.format(f2 / 2)
-	print 'f1 / 2 * 2: {}'.format(f1 / 2 * 2)
-	print 'f2 / 2 * 2: {}'.format(f2 / 2 * 2)
+	print 'f1 / 21541 * 21541: {}'.format(f1 / 21541 * 21541)
+	print 'f2 / 21541 * 21541: {}'.format(f2 / 21541 * 21541)
 	print
 	print '##'
 	print '#\tComplex Fractions'
@@ -225,8 +225,6 @@ if __name__ == '__main__':
 	print
 	fr1 = Fraction(1,6)
 	fr2 = Fraction(1,4)
-	# fr3 = Fraction(2,1)
-	# fr4 = Fraction(0,1)
 	cf1 = ComplexFraction(fr1, fr2)
 	cf2 = ComplexFraction(2, 1, 0, 1)
 	print 'cf1: {}'.format(cf1)
@@ -254,11 +252,11 @@ if __name__ == '__main__':
 	print 'cf1 + 2: {}'.format(cf1 + 2)
 	print 'cf1 - 2: {}'.format(cf1 - 2)
 	print 'cf2 - cf1: {}'.format(cf2 - 2)
-	print 'cf1 - 2 + 2: {}'.format(cf1 - 2 + 2)
-	print 'cf2 - cf1 + cf1: {}'.format(cf2 - 2 + 2)
+	print 'cf1 - 21541 + 21541: {}'.format(cf1 - 21541 + 21541)
+	print 'cf2 - 21541 + 21541: {}'.format(cf2 - 21541 + 21541)
 	print
 	print 'cf1 * 2: {}'.format(cf1 * 2)
 	print 'cf1 / 2: {}'.format(cf1 / 2)
 	print 'cf2 / 2: {}'.format(cf2 / 2)
-	print 'cf1 / 2 * 2: {}'.format(cf1 / 2 * 2)
-	print 'cf2 / 2 * 2: {}'.format(cf2 / 2 * 2)
+	print 'cf1 / 21541 * 21541: {}'.format(cf1 / 21541 * 21541)
+	print 'cf2 / 21541 * 21541: {}'.format(cf2 / 21541 * 21541)
