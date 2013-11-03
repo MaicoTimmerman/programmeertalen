@@ -59,6 +59,8 @@ class Fraction:
 		elif isinstance(other, int):
 			f1 = self.intToFraction(other)
 			return self * f1
+		else:
+			raise TypeError('cannot multiply Fraction with non-int/non-Fraction')
 		
 	#Divide self by Fraction other and return new Fraction.
 	def __div__(self, other):
@@ -67,6 +69,8 @@ class Fraction:
 		elif isinstance(other, int):
 			f1 = self.intToFraction(other)
 			return self / f1
+		else:
+			raise TypeError('cannot divide Fraction with non-int/non-Fraction')
 		
 	#Add self to Fraction other and return new Fraction.
 	def __add__(self, other):
@@ -75,6 +79,8 @@ class Fraction:
 		elif isinstance(other, int):
 			f1 = self.intToFraction(other)
 			return self + f1
+		else:
+			raise TypeError('cannot add Fraction with non-int/non-Fraction')
 		
 	#Substract other from self and return new Fractions
 	def __sub__(self, other):
@@ -83,6 +89,8 @@ class Fraction:
 		elif isinstance(other, int):
 			f1 = self.intToFraction(other)
 			return self - f1
+		else:
+			raise TypeError('cannot substract Fraction with non-int/non-Fraction')
 
 class ComplexFraction:
 	def __init__(self, args1, args2, args3=None, args4=None):
@@ -111,6 +119,8 @@ class ComplexFraction:
 			return ComplexFraction(self.re + other, self.im)
 		elif isinstance(other, int):
 			return ComplexFraction(self.re + other, self.im)
+		else:
+			raise TypeError('cannot add Fraction with non-(int/Fraction/ComplexFraction')
 
 	#Substracts other from self and returns the result as ComplexFraction.
 	def __sub__(self, other):
@@ -120,6 +130,8 @@ class ComplexFraction:
 			return ComplexFraction(self.re - other, self.im)
 		elif isinstance(other, int):
 			return ComplexFraction(self.re - other, self.im)
+		else:
+			raise TypeError('cannot substract Fraction with non-(int/Fraction/ComplexFraction')
 
 	#Returns the result of self * other as ComplexFraction.
 	def __mul__(self, other):
@@ -130,6 +142,9 @@ class ComplexFraction:
 			return ComplexFraction(self.re * other, self.im * other)
 		elif isinstance(other, int):
 			return ComplexFraction(self.re * other, self.im * other)
+		else:
+			raise TypeError('cannot multiply Fraction with non-(int/Fraction/ComplexFraction')
+
 
 
 	#Returns the result of self / other as ComplexFraction.
@@ -141,8 +156,8 @@ class ComplexFraction:
 										self.re * other.reciproke())
 		elif isinstance(other, int):
 			return self * Fraction(1, other)
-
-		returm
+		else:
+			raise TypeError('cannot divide Fraction with non-(int/Fraction/ComplexFraction')
 
 	#Returns the reciproke ComplexFraction of self.
 	def reciproke(self):
