@@ -82,7 +82,7 @@ class Fraction:
 		else:
 			raise TypeError('cannot add Fraction with non-int/non-Fraction')
 		
-	#Substract other from self and return new Fractions
+	#Substract other from self and return new Fraction.
 	def __sub__(self, other):
 		if isinstance(other, Fraction):
 			return Fraction((self.nom * other.den) - (other.nom * self.den), (self.den * other.den))
@@ -91,6 +91,12 @@ class Fraction:
 			return self - f1
 		else:
 			raise TypeError('cannot substract Fraction with non-int/non-Fraction')
+	#Take power of self to other and return new Fraction.
+	def __pow__(self, other):
+		if isinstance(other, int):
+			return Fraction(self.nom**other,self.den**other)
+		else:
+			raise TypeError('can only take power of a fraction with an integer.')
 
 class ComplexFraction:
 	def __init__(self, args1, args2, args3=None, args4=None):
@@ -145,8 +151,6 @@ class ComplexFraction:
 		else:
 			raise TypeError('cannot multiply Fraction with non-(int/Fraction/ComplexFraction')
 
-
-
 	#Returns the result of self / other as ComplexFraction.
 	def __div__(self, other):
 		if isinstance(other, ComplexFraction):
@@ -184,8 +188,8 @@ if __name__ == '__main__':
 	print '#\tFractions:'
 	print '##'
 	print
-	f1 = Fraction(1,6)
-	f2 = Fraction(1,4)
+	f1 = Fraction(2,6)
+	f2 = Fraction(6,4)
 	print 'f1: {}'.format(f1)
 	print 'f2: {}'.format(f2)
 	print 'omgekeerde f1: {}'.format(f1.reciproke())
@@ -202,6 +206,9 @@ if __name__ == '__main__':
 	print 'f2 / f1: {}'.format(f2 / f1)
 	print 'f1 / f2 * f2: {}'.format(f1 / f2 * f2)
 	print 'f2 / f1 * f1: {}'.format(f2 / f1 * f1)
+	print
+	print 'f1 ** 2: {}'.format(f1**2)
+	print 'f2 ** 2: {}'.format(f2 ** 2)
 	print
 	print '##'
 	print '#\t Fractions with integers'
