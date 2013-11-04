@@ -5,7 +5,7 @@
 #
 #   fractions.py
 #       This program implements 2 classes, Fraction and Complex Faction.
-#       Both classes have overloaded functions for +, -, * and /. and 
+#       Both classes have overloaded functions for +, -, *, /, ** and 
 #		can be reversed.
 ##
 
@@ -30,7 +30,7 @@ class Fraction:
 		else:
 			raise ValueError('Use: Fraction(int, int)')
 
-	#Return a string in the form Fraction(x, x)
+	#Return a string in the form Fraction(x, x).
 	def __repr__(self):
 		return 'Fraction({},{})'.format(self.nom, self.den)
 
@@ -38,17 +38,17 @@ class Fraction:
 	def __str__(self):
 		return '{}/{}'.format(self.nom, self.den)
 	
-	#Return the ggd of the two values
+	#Return the ggd of the two values.
 	def getGgd(self, nom, den):
 		while nom != 0:
 			den,nom = nom, den % nom
 		return den
 
-	#Return the reciproke of the current Fraction
+	#Return the reciproke of the current Fraction.
 	def reciproke(self):
 		return Fraction(self.den, self.nom)
 
-	#Returns the int as a Fraction
+	#Returns the int as a Fraction.
 	def intToFraction(self, other):
 		return Fraction(other, 1)
 
@@ -109,7 +109,7 @@ class ComplexFraction:
 		else:
 			raise ValueError('Use: ComplexFraction(Fraction, Fraction) or ComplexFraction(int, int, int, int)')
 
-	#Returns a string in the form of (x/x) + (x/x)j
+	#Returns a string in the form of (x/x) + (x/x)j.
 	def __str__(self):
 		return '({}) + ({})j'.format(self.re, self.im)
 
@@ -173,7 +173,7 @@ class ComplexFraction:
 		f2 = Fraction((-1 *(r * q * q * s)), (p * p * s * s) + (r * r * q * q))
 		return ComplexFraction(f1, f2)
 
-	#Return a pythonic complex value
+	#Return a pythonic complex value.
 	def toComplex(self):
 		p = float(self.re.nom)
 		q = float(self.re.den)
@@ -182,7 +182,7 @@ class ComplexFraction:
 		return complex(p/q, r/s)
 		
 
-#Test Fraction and ComplexFraction classes
+#Test Fraction and ComplexFraction classes.
 if __name__ == '__main__':
 	print '##'
 	print '#\tFractions:'
