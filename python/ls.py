@@ -31,7 +31,28 @@ class Stack:
 		else:
 			return False
 
-def 
+def parseWord(word, startIndex):
+	c, par, pastIndex
+	wordLength = len(word)
+	if wordLength <= startIndex:
+		c = word[startIndex]
+	else:
+		c = None
+	if wordLength <= (startIndex + 1):
+		if (word[startIndex + 1]) == '(':
+			i = 1
+			while True:
+				if word[startIndex + i + 1] != ')'
+					par = par.word[startIndex + 1 + i]
+				else:
+					pastIndex = word[startIndex + i + 1]
+					break
+		else:
+			pastIndex = word[startIndex + 1]
+	else:
+		par = None
+		pastIndex = -1
+	return c, par, pastIndex
 
 if __name__ == '__main__':
 	a = Stack()
