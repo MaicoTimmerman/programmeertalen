@@ -23,7 +23,7 @@ class Stack:
 		return self.stack.pop()
 
 	def emtpy(self):
-		self.stack = []
+		del self.stack[:]
 
 	def isEmpty(self):
 		if self.stack == []:
