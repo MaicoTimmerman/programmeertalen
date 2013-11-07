@@ -6,8 +6,6 @@
 from graphics import *
 from math import sin, cos, pi
 
-
-
 class LS:
     """The Lindenmayer System"""
     def __init__(self, defstep, defangle):
@@ -52,8 +50,8 @@ class LS:
         # code.
         #
         rString = 'LS({},{})\n'.format(self.defstep, self.defangle) 
-        rString += 'Axiom: {}\n'.format(self.axiom)
-        rString += 'Rules: {}\n'.format(self.rules)
+        rString += 'ls.setAxiom(\'{}\') \n'.format(self.axiom)
+        rString += 'ls.addRule(\'{}\')\n'.format(self.rules)
         return rString
         
     
@@ -92,9 +90,11 @@ class Stack:
         return self.stack.pop()
 
     def emtpy(self):
+        """Not really used!"""
         del self.stack[:]
 
     def isEmpty(self):
+        """Not really used!"""
         if self.stack == []:
             return True
         else:
@@ -125,7 +125,8 @@ def parseWord(word, startIndex):
 
 class Turtle:
     def __init__(self, win, defwidth):
-        pass
+        self.width = defwidth
+        self.win = win
     
     def stepPenUp(self):
         self.step(False)
@@ -134,9 +135,9 @@ class Turtle:
         self.step(True)
         
     def step(self, isPenDown):
-        """action associated with F or f:
-        change the state of the turtle and draw
-        in case isPenDown==True"""
+        dx = 
+        if isPenDown:
+
         pass
     
     def left(self):
@@ -158,6 +159,10 @@ class Turtle:
         pass
     
     def drawLS(self, lsys, n, startx, starty, startangle):
+        self.currentAngle = startangle
+        self.turnAngle = lsys.defangle
+        self.pos = Point(startx, starty)
+        self.step = 
         """Draw the Lindenmayer system (lsys) after n iterations
         startx, starty are the starting position on the window
         startangle is the starting angle
@@ -201,7 +206,7 @@ if __name__=='__main__':
               # the three lines above
     
     t = Turtle(win, 1)
-    t.drawLS(ls, 3, 100, 100, pi/2)
+    t.drawLS(ls,  = 00, 100, pi/2)
 
     tree = LS(80,pi/2)
     tree.setAxiom('"(1.5)FFA')
