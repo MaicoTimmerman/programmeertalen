@@ -1,4 +1,4 @@
-#
+# test
 #  PUT SOME INFO HERE.... (who you are and what is in this file)
 #
 #
@@ -127,42 +127,53 @@ class Turtle:
     def __init__(self, win, defwidth):
         self.width = defwidth
         self.win = win
+        self.stack = Stack()
     
     def stepPenUp(self):
         self.step(False)
         
     def stepPenDown(self):
         self.step(True)
-        
+    
     def step(self, isPenDown):
-        dx = 
+        dx = self.step * int(cos(self.currentAngle))
+        dy = self.step * int(sin(self.currentAngle))
+        newPos = Point(self.pos.getX() + dx, self.pos.getY() + dy)
         if isPenDown:
-
-        pass
+            line = Line(self.pos, self.newPos)
+            line.setWidth(self.currentWidth)
+            line.draw(self.win)
+            self.pos = self.newPos
+        else:
+            self.pos = self.newPos
     
     def left(self):
         """action associated with +"""
-        pass
+        self.currentAngle -= turnAngle
         
     def right(self):
         """action associated with -"""
+        self.currentAngle += turnAngle
         
     def scale(self, scale):
         """action associated with \"(scale) """
+        self.currentWidth *= scale
     
     def push(self):
         """action associated with ["""
-        pass
+        stack.push(TurtleState(self.pos, self.step, self.currentAngle, self.currentWidth))
         
     def pop(self):
         """action associated with ]"""
-        pass
+        
     
     def drawLS(self, lsys, n, startx, starty, startangle):
         self.currentAngle = startangle
+        self.currentWidth = lsys.defstep #FOUT!
         self.turnAngle = lsys.defangle
         self.pos = Point(startx, starty)
-        self.step = 
+        self.step = 0
+        self.drawAxiom = lsys.generate(n)
         """Draw the Lindenmayer system (lsys) after n iterations
         startx, starty are the starting position on the window
         startangle is the starting angle
@@ -206,7 +217,7 @@ if __name__=='__main__':
               # the three lines above
     
     t = Turtle(win, 1)
-    t.drawLS(ls,  = 00, 100, pi/2)
+    t.drawLS(ls, 100, 100, pi/2)
 
     tree = LS(80,pi/2)
     tree.setAxiom('"(1.5)FFA')
