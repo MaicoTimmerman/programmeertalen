@@ -14,11 +14,11 @@ class LS:
         self.defangle = defangle
         self.axiom = ''
         self.rules = {}
-    
+
     def setAxiom(self, ax):
         """Set the axiom"""
         self.axiom = ax
-        
+
     def addRule(self, letter, word):
         """Add a rule to the set of rules"""
         self.rules[letter] = word
@@ -36,7 +36,7 @@ class LS:
                 startWord = newWord
         return startWord
 
-    
+
     def __repr__(self):
         """Generate a string representing the LS"""
         #
@@ -53,8 +53,8 @@ class LS:
         rString += 'ls.setAxiom(\'{}\') \n'.format(self.axiom)
         rString += 'ls.addRule(\'{}\')\n'.format(self.rules)
         return rString
-        
-    
+
+
 class TurtleState:
     """The state of the turtle. This is needed so we can push one object on the stack
     that contains: the position of the turtle, its orientation, the actual stepsize and
@@ -64,7 +64,7 @@ class TurtleState:
         self.step = step
         self.angle = angle
         self.width = width
-    
+
     def clone(self):
         """return a clone of the state."""
         return TurtleState(Point(self.pos.getX(), self.pos.getY()), self.step, self.angle, self.width)
@@ -74,7 +74,7 @@ class TurtleState:
         rString = 'Pos: {},{},\n'.format(self.pos.getX(), self.pos.getY())
         rString += 'Step: {},\nAngle: {},\nWidth: {}'.format(self.step, self.angle, self.width)
         return rString
-    
+
 
 class Stack:
     def __init__(self):
@@ -99,7 +99,7 @@ class Stack:
             return True
         else:
             return False
-    
+
 def parseWord(word, startIndex):
     c, par, pastIndex
     wordLength = len(word)
@@ -125,16 +125,16 @@ def parseWord(word, startIndex):
 
 class Turtle:
     def __init__(self, win, defwidth):
-        self.width = defwidth
+        self.defwidth = defwidth
         self.win = win
         self.stack = Stack()
-    
+
     def stepPenUp(self):
         self.step(False)
-        
+
     def stepPenDown(self):
         self.step(True)
-    
+
     def step(self, isPenDown):
         dx = self.step * int(cos(self.currentAngle))
         dy = self.step * int(sin(self.currentAngle))
@@ -146,33 +146,33 @@ class Turtle:
             self.pos = self.newPos
         else:
             self.pos = self.newPos
-    
+
     def left(self):
         """action associated with +"""
         self.currentAngle -= turnAngle
-        
+
     def right(self):
         """action associated with -"""
         self.currentAngle += turnAngle
-        
+
     def scale(self, scale):
         """action associated with \"(scale) """
         self.currentWidth *= scale
-    
+
     def push(self):
         """action associated with ["""
-        stack.push(TurtleState(self.pos, self.step, self.currentAngle, self.currentWidth))
-        
+        stack.push(TurtleState(Point(self.pos.getX(), self.pos.getY),
+                 self.step, self.currentAngle, self.currentWidth))
+
     def pop(self):
         """action associated with ]"""
-        
-    
+
+
     def drawLS(self, lsys, n, startx, starty, startangle):
         self.currentAngle = startangle
-        self.currentWidth = lsys.defstep #FOUT!
         self.turnAngle = lsys.defangle
         self.pos = Point(startx, starty)
-        self.step = 0
+        self.step = lsys.defstep
         self.drawAxiom = lsys.generate(n)
         """Draw the Lindenmayer system (lsys) after n iterations
         startx, starty are the starting position on the window
@@ -198,7 +198,7 @@ class Turtle:
         """
         pass
 
-    
+
 
 if __name__=='__main__':
     #
@@ -209,13 +209,13 @@ if __name__=='__main__':
     win = GraphWin('Lindenmayer System', 400, 400)
     win.yUp()
 
-    ls = LS(3,pi/2)
+    ls = LS(3,pi/2) #step 3, angle:90 degree
     ls.setAxiom('F-F-F-F')
     ls.addRule('F','F-F+F+FF-F-F+F')
 
     print ls  # in the 'default' implementation this would print something like
               # the three lines above
-    
+
     t = Turtle(win, 1)
     t.drawLS(ls, 100, 100, pi/2)
 
@@ -225,5 +225,5 @@ if __name__=='__main__':
 
     t.defwidth = 12
     t.drawLS(tree, 10, 200, 30, pi/2)
-    
+
     win.promptClose(win.getWidth()/2,20)
