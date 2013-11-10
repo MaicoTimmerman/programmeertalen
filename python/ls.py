@@ -3,10 +3,10 @@
 #   CKNUM   : 10542590
 #   Studie  : Informatica
 #
-#   ls.py
-#       This program implements 2 classes, Fraction and Complex Faction.
-#       Both classes have overloaded functions for +, -, *, /, ** and 
-#       can be reversed.
+#   LS.py
+#       This program implements  classes that can produce a lindenmayer system.
+#       Lindenmayer systems are drawn with an imaginairy turtle using a stack
+#       based system. 
 ##
 
 from graphics import *
