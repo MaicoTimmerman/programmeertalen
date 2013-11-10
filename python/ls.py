@@ -1,7 +1,13 @@
-# test
-#  PUT SOME INFO HERE.... (who you are and what is in this file)
+##
+#   NAAM    : Maico Timmerman
+#   CKNUM   : 10542590
+#   Studie  : Informatica
 #
-#
+#   ls.py
+#       This program implements 2 classes, Fraction and Complex Faction.
+#       Both classes have overloaded functions for +, -, *, /, ** and 
+#       can be reversed.
+##
 
 from graphics import *
 from math import sin, cos, pi
@@ -61,32 +67,36 @@ class TurtleState:
     the actual width of the lines to be drawn"""
     def __init__(self, pos, step, angle, width):
         self.pos = pos
-        self.step = step
+        self.stepSize = step
         self.angle = angle
         self.width = width
 
     def clone(self):
         """return a clone of the state."""
-        return TurtleState(Point(self.pos.getX(), self.pos.getY()), self.step, self.angle, self.width)
+        return TurtleState(Point(self.pos.getX(), self.pos.getY()), self.stepSize, self.angle, self.width)
 
     def __repr__(self):
         """really easy when debugging"""
         rString = 'Pos: {},{},\n'.format(self.pos.getX(), self.pos.getY())
-        rString += 'Step: {},\nAngle: {},\nWidth: {}'.format(self.step, self.angle, self.width)
+        rString += 'Step: {},\nAngle: {},\nWidth: {}'.format(self.stepSize, self.angle, self.width)
         return rString
 
 
 class Stack:
     def __init__(self):
+        """create Stack with list"""
         self.stack = []
 
     def __str__(self):
+        """print stack"""
         return self.stack.__str__()
 
     def push(self,item):
+        """add an item at the end of the list"""
         self.stack.append(item)
 
     def pop(self):
+        """remove and return the last item in the list"""
         return self.stack.pop()
 
     def emtpy(self):
@@ -101,23 +111,29 @@ class Stack:
             return False
 
 def parseWord(word, startIndex):
-    c, par, pastIndex
     wordLength = len(word)
-    if wordLength <= startIndex:
+    par = ''
+    """test if the index exists for the letter"""
+    if wordLength > startIndex:
         c = word[startIndex]
     else:
         c = None
-    if wordLength <= (startIndex + 1):
+    """test is the index for the next letter and ( exists"""
+    if wordLength > (startIndex + 1):
         if (word[startIndex + 1]) == '(':
             i = 1
             while True:
                 if word[startIndex + i + 1] != ')':
-                    par = par.word[startIndex + 1 + i]
+                    """keep adding letters till the ) is found"""
+                    par = par + word[startIndex + 1 + i]
+                    i+=1
                 else:
-                    pastIndex = word[startIndex + i + 1]
+                    pastIndex = startIndex + i + 2
                     break
+            par = float(par)
         else:
-            pastIndex = word[startIndex + 1]
+            par = None
+            pastIndex = startIndex + 1
     else:
         par = None
         pastIndex = -1
@@ -125,103 +141,106 @@ def parseWord(word, startIndex):
 
 class Turtle:
     def __init__(self, win, defwidth):
+        """initialize a turtle with a default with and a window to draw on"""
         self.defwidth = defwidth
         self.win = win
         self.stack = Stack()
 
-    def stepPenUp(self):
+    def stepPenUp(self, none):
+        """make a step without making a line"""
         self.step(False)
 
-    def stepPenDown(self):
+    def stepPenDown(self, none):
+        """make a step while making a line"""
         self.step(True)
 
     def step(self, isPenDown):
-        dx = self.step * int(cos(self.currentAngle))
-        dy = self.step * int(sin(self.currentAngle))
-        newPos = Point(self.pos.getX() + dx, self.pos.getY() + dy)
+        """make a step with/without a line on the path travelled"""
+        dx = self.stepSize * int(cos(self.currentAngle))
+        dy = self.stepSize * int(sin(self.currentAngle))
+        self.newPos = Point(self.pos.x + dx, self.pos.y + dy)
         if isPenDown:
             line = Line(self.pos, self.newPos)
-            line.setWidth(self.currentWidth)
+            line.setWidth(self.defwidth)
             line.draw(self.win)
             self.pos = self.newPos
         else:
             self.pos = self.newPos
 
-    def left(self):
+    def left(self, none):
         """action associated with +"""
-        self.currentAngle -= turnAngle
+        self.currentAngle = self.currentAngle - self.turnAngle
 
-    def right(self):
+    def right(self, none):
         """action associated with -"""
-        self.currentAngle += turnAngle
+        self.currentAngle = self.currentAngle + self.turnAngle
 
     def scale(self, scale):
         """action associated with \"(scale) """
-        self.currentWidth *= scale
+        self.defwidth = self.defwidth * scale
+        self.stepSize = self.stepSize * scale
 
-    def push(self):
+    def push(self, none):
         """action associated with ["""
-        stack.push(TurtleState(Point(self.pos.getX(), self.pos.getY),
-                 self.step, self.currentAngle, self.currentWidth))
+        self.stack.push(TurtleState(Point(self.pos.x, self.pos.y),
+                 self.stepSize, self.currentAngle, self.defwidth))
 
-    def pop(self):
+    def pop(self, none):
         """action associated with ]"""
-
+        self.state = self.stack.pop().clone()
+        """set all var back to before the branch"""
+        self.currentAngle = self.state.angle
+        self.pos = self.state.pos
+        self.defwidth = self.state.width
+        self.stepSize = self.state.stepSize
+        self.pos = self.state.pos
 
     def drawLS(self, lsys, n, startx, starty, startangle):
+        """Draw the Lindenmayer system (lsys) after n iterations
+        startx, starty are the starting position on the window
+        startangle is the starting angle"""
         self.currentAngle = startangle
         self.turnAngle = lsys.defangle
         self.pos = Point(startx, starty)
-        self.step = lsys.defstep
+        self.stepSize = lsys.defstep
         self.drawAxiom = lsys.generate(n)
-        """Draw the Lindenmayer system (lsys) after n iterations
-        startx, starty are the starting position on the window
-        startangle is the starting angle
+        self.nextIndex = 0
+        self.functions = {'F': self.stepPenDown,
+                          'f': self.stepPenUp,
+                          '\"':self.scale,
+                          '+': self.left,
+                          '-': self.right,
+                          '[': self.push,
+                          ']': self.pop}
+        while self.nextIndex <= len(self.drawAxiom) and self.nextIndex != -1:
+            self.c,self.par,self.nextIndex = parseWord(self.drawAxiom, self.nextIndex)
+            if self.c in self.functions:
+                self.functions[self.c](self.par)
 
-        This function does the interpretation of the LS string (you are give
-        the LS object and the required number of iterations).
-        Loop over characters in the generated string using the parseWord function. Every
-        call to parseWord will return three values c,par,pastindex.
-        Decide what to do for every character c (and use the right argument if 
-        an argument was given and found in the string).
-
-        This is also the function where you need the Stack class. When
-        you encounter the '[' character you have to push the state and
-        when you encounter the ']' character you have to pop a state
-        from the stack.
-
-        Please be aware not to push a reference to the state on the
-        stack (you will be overwriting it). I advise to have a method
-        clone in the State class that really makes a new state object
-        that you can safely push on the stack.
-
-        """
-        pass
+            
 
 
 
 if __name__=='__main__':
-    #
-    # the following code is what is used to test the default
-    # implementation. Running this code shows two Lindemayer systems
-    # in one window
-    #
     win = GraphWin('Lindenmayer System', 400, 400)
     win.yUp()
 
-    ls = LS(3,pi/2) #step 3, angle:90 degree
+    ls = LS(3,pi/2) 
     ls.setAxiom('F-F-F-F')
     ls.addRule('F','F-F+F+FF-F-F+F')
 
-    print ls  # in the 'default' implementation this would print something like
-              # the three lines above
+    print 'ls:'
+    print ls
 
     t = Turtle(win, 1)
-    t.drawLS(ls, 100, 100, pi/2)
+    t.drawLS(ls, 3, 100, 100, 0)
 
     tree = LS(80,pi/2)
     tree.setAxiom('"(1.5)FFA')
     tree.addRule('A', '"(0.687)[+FA][-FA]')
+
+    print 'tree:'
+    print tree
 
     t.defwidth = 12
     t.drawLS(tree, 10, 200, 30, pi/2)
