@@ -45,16 +45,6 @@ class LS:
 
     def __repr__(self):
         """Generate a string representing the LS"""
-        #
-        # for this class just printing the constructor is not enough:
-        # the axiom and rules are added later. These have to be printed as
-        # well. You could return as a string the Python code that would reconstruct
-        # the LS class instantiation WITH the axiom and the rules.
-        #
-        # This method is not obligatory for this course but you are strongly
-        # encouraged to give it a try. It also helps when you need to debug your
-        # code.
-        #
         rString = 'LS({},{})\n'.format(self.defstep, self.defangle) 
         rString += 'ls.setAxiom(\'{}\') \n'.format(self.axiom)
         rString += 'ls.addRule(\'{}\')\n'.format(self.rules)
@@ -184,7 +174,7 @@ class Turtle:
     def push(self, none):
         """action associated with ["""
         self.stack.push(TurtleState(Point(self.pos.x, self.pos.y),
-                 self.stepSize, self.currentAngle, self.defwidth))
+            self.stepSize, self.currentAngle, self.defwidth))
 
     def pop(self, none):
         """action associated with ]"""
@@ -207,18 +197,18 @@ class Turtle:
         self.drawAxiom = lsys.generate(n)
         self.nextIndex = 0
         self.functions = {'F': self.stepPenDown,
-                          'f': self.stepPenUp,
-                          '\"':self.scale,
-                          '+': self.left,
-                          '-': self.right,
-                          '[': self.push,
-                          ']': self.pop}
+                'f': self.stepPenUp,
+                '\"':self.scale,
+                '+': self.left,
+                '-': self.right,
+                '[': self.push,
+                ']': self.pop}
         while self.nextIndex <= len(self.drawAxiom) and self.nextIndex != -1:
             self.c,self.par,self.nextIndex = parseWord(self.drawAxiom, self.nextIndex)
             if self.c in self.functions:
                 self.functions[self.c](self.par)
 
-            
+
 
 
 
