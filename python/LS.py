@@ -158,6 +158,7 @@ class Turtle:
         """make a step with/without a line on the path travelled"""
         dx = self.stepSize * int(cos(self.currentAngle))
         dy = self.stepSize * int(sin(self.currentAngle))
+        """new position is old position + calculated differences"""
         self.newPos = Point(self.pos.x + dx, self.pos.y + dy)
         if isPenDown:
             line = Line(self.pos, self.newPos)
