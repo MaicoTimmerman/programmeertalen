@@ -1,4 +1,13 @@
 /*Prolog sudoku3.pl*/ 
+
+/* test:
+ * sudoku([2,_,_,_,
+ * _,_,1,_,
+ * _,2,_,_,
+ * _,_,_,4,]).
+ * sudoku([2,_,_,_,_,_,1,_,_,2,_,_,_,_,_,4,]).
+ */
+
 :- use_module(library(clpfd)).
 valid([]).
 valid([Head|Tail]) :-	
