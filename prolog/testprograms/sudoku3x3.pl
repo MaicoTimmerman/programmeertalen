@@ -12,7 +12,7 @@ sudoku(Puzzle, Solution) :-
         S61,S62,S63,S64,S65,S66,S67,S68,S69,
         S71,S72,S73,S74,S75,S76,S77,S78,S79,
         S81,S82,S83,S84,S85,S86,S87,S88,S89,
-        S91,S92,S93,S94,S95,S96,S97,S98,S99,
+        S91,S92,S93,S94,S95,S96,S97,S98,S99],
         
     Puzzle ins 1..9,
     Solution = Puzzle,
@@ -44,8 +44,10 @@ sudoku(Puzzle, Solution) :-
     Block4 = [S41,S42,S43,S51,S52,S53,S61,S62,S63],
     Block5 = [S44,S45,S46,S54,S55,S56,S64,S65,S66],
     Block6 = [S47,S48,S49,S57,S58,S59,S67,S68,S69],
-    %Nog doen!!!
-    Block7 = [S11,S12,S13,S21,S22,S23,S31,S32,S33],
-    Block8 = [S14,S15,S16,S24,S25,S26,S34,S35,S36],
-    Block9 = [S17,S18,S19,S27,S28,S29,S37,S38,S39],
-    valid([Row1,Row2,Row3,Row4,Col1,Col2,Col3,Col4,Block1,Block2,Block3,Block4]).
+    Block7 = [S71,S72,S73,S81,S82,S83,S91,S92,S93],
+    Block8 = [S74,S75,S76,S84,S85,S86,S94,S95,S96],
+    Block9 = [S77,S78,S79,S87,S88,S89,S97,S98,S99],
+
+    valid([Row1,Row2,Row3,Row4,Row5,Row6,Row7,Row8,Row9,
+        Col1,Col2,Col3,Col4,Col5,Col6,Col7,Col8,Col9,
+        Block1,Block2,Block3,Block4,Block5,Block6,Block7,Block8,Block9]).
