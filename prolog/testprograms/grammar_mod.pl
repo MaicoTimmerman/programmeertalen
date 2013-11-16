@@ -1,3 +1,4 @@
+
 sentence(Number, sentence(NP, VP)) -->
 	noun_phrase(Number, NP),
 	verb_phrase(Number, VP).
