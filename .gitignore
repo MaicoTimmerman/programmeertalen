@@ -9,6 +9,7 @@
 *.doc?
 #ignore compiled files
 *.class
+*.beam
 *.py[cod]
 #ignore containers
 *.tar
