@@ -19,6 +19,9 @@
 #ignore backup files
 *~
 *.BAK
+#ignore extra LaTeX files
+*.log
+*.aux
 
 #Ignores for directories
 #ignore inleveren
