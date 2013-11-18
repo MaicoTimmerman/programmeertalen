@@ -63,7 +63,7 @@ intrans_verb( X, paints(X))  -->  [paints].
 test1( M) :-
     sentence( M, [john,paints],[]).
 test2( M) :-
-    sentence( M, [a, man, paints], []).
+    sentence( M, [a,man,paints],[]).
 test3( M) :-
     sentence( M, [every,man,that,paints,admires,monet],[]).
 test4( M) :-

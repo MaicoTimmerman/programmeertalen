@@ -81,8 +81,8 @@ test4( M) :-
 test5( M) :-
     sentence( M, [every,woman,that,admires,a,man,that,paints,likes,monet],[]).
 test6( M) :-
-    sentence( M, [a, man, paints, and, john, paints],[]).
+    sentence( M, [a,man,paints,and,john,paints],[]).
 test7( M) :-
-    sentence( M, [a, man, paints, or, john, paints],[]).
+    sentence( M, [a,man,paints,or,john,paints],[]).
 test8( M) :-
-    sentence( M, [if, a, man, paints, then, every, woman, paints],[]).
+    sentence( M, [if,a,man,paints,then,every,woman,paints],[]).
