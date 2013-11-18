@@ -2,6 +2,8 @@
  *
  *  Maico Timmerman
  *  CKNUM:   10542590
+ *
+ *  Catching the wrong value for X, making sure X isn't an atom happens in line 24.
  */
 
 
