@@ -1,9 +1,10 @@
 /*  Prolog natural_language
-*
-*  Maico Timmerman
-*  CKNUM:   10542590
-*
-*  Catching the wrong value for X, making sure X isn't an atom happens in line 24.
+ *
+ *  Maico Timmerman
+ *  CKNUM:   10542590
+ *  
+ *  Definite clause grammar for simple sentences.
+ *  if-then, and, or extensions to sentences supported.
  */
 
 
@@ -11,82 +12,77 @@
 :- op(120, xfy, or).
 :- op(150, xfy, =>).
 
-% het opvangen van niet gebruikte singletons in statements.
+% Catching unused singletons from causing a warning while compiling.
 :- style_check(-singleton).
 
 
-% Normale zin zonder voegworden/conditinele statements
+% Normal sentence without any special extensions.
 sentence( S) -->  simple_sentence(S).
-% 'and'  zin
+% 'and' sentence made of a simple sentence and an follow up recursive part. 
 sentence( S and S2) --> simple_sentence(S), [and], sentence(S2).
-% 'or' zin
+% 'or' sentence made of a simple sentence and an follow up recursive part. 
 sentence( S or S2) --> simple_sentence(S), [or], sentence(S2).
-% 'if ... then ...' zin
+% 'if ... then ...' sentence made of a simple sentence and an follow up recursive part. 
 sentence( S => S2) --> [if], simple_sentence(S), [then], sentence(S2).
 
-% zin(S) bestaat uit zelfst. naamwoord(X,P,S)+ werkwoordzin(X,P)
+% a sentence build from a noun- and verb-phrase
 simple_sentence( S)  --> noun_phrase( X, P, S), verb_phrase( X, P).
 
-
-% zelfst. naamwoord(X,P,S) bestaat uit lidwoord(X,P12,P,S), zelfst. naamwoord(X,P1)
-% en bijvoegelijke bijzin(X,P1,P12) met check dat X geen atoom is, anders moet noun_phrase(X,P,P)
-% worden aangeroepen.
+% noun_phrase existing of a determiner, a noun, and a relative clause. this rule contains an additional
+% condition that checks if the noun is not an atom, but an variable.
+% If no check is set then wrong nouns can end up while rebuilding the sentence from a logical expression.
 noun_phrase( X, P, S)  --> determiner( X, P12, P, S), noun( X, P1), rel_clause( X, P1, P12), { \+ atom(X)}.
-% zelfst. naamwoord(X,P,P) bestaat uit zelfst. naamwoord(X)
+%noun phrase existing of a noun.
 noun_phrase( X, P, P)  --> proper_noun( X).
 
-
-% werkwoord(X,P) bestaat uit werkwoord(X,Y,P1) en zelfst. naamwoord(Y,P1,P)
+% verb phrase existing of a verb and a noun phrase.
 verb_phrase( X, P)  --> trans_verb( X, Y, P1), noun_phrase( Y, P1, P).
-% werkwoord (X,P) bestaat uit werkwoord(X,P)
+% verb phrase existing of only a verb.
 verb_phrase( X, P)  --> intrans_verb( X, P).
 
-
-% bijvoegelijke bijzin (X,P1, P1 en P2) bestaat uit 'that' + werkwoord(X,P2)
+% a relative clause existing of 'that' and a verb phrase.
 rel_clause( X, P1, P1 and P2)  --> [that], verb_phrase( X, P2).
-% bijvoegelijke bijzin(X,P1,P1) bestaat uit een lege array
+% an empty relative clause. 
 rel_clause( X, P1, P1)  --> [].
 
 
-% lidwoord[de, het, een, mijn, elke] (X,P1,P,alle gevallen(X,P1=>P)) bestaat uit [every]
+% determiner for all/every translates to 'every'.
 determiner( X, P1, P, all( X, P1 => P))  --> [every].
-% lidwoord waarin (X,P1,P bestaat(X +P1 en P) bestaat uit [a]
+% determiner for exists/there is translates to 'a'
 determiner( X, P1, P, exists( X, P1 and P)) --> [a].
 
-% zelfst. naamwoord voor iedere man(John en monet)
+% noun for all man.
 noun( X, man(X))  -->  [man].
-% zelfst. naamwoord voor iedere vrouw(annie)
+% noun for all women.
 noun( X, woman(X))  -->  [woman].
-% voorbeeld naam voor man
+
+% example names for testing purposes.
 proper_noun( john)  -->  [john].
-% voorbeeld naam voor vrouw
 proper_noun( annie)  -->  [annie].
-% franse impressionistisch schilder leefde rond de 19e eeuw
 proper_noun( monet)  -->  [monet].
 
-% 2-delig werkwoord verband
-% iets(X) iets(Y), likes(X,Y) betekent [likes] in array proppen
+% transitive verbs:
 trans_verb( X, Y, likes( X, Y))  -->  [ likes].
-% iets(X) iets(Y), admires(X,Y) betekent [admires] in array proppen
 trans_verb( X, Y, admires( X, Y))  -->  [admires].
 
-% simpel werkwoords verband
-% iets(X), paints(X) betekent [paints] in array proppen
+% intrasitive verbs:
 intrans_verb( X, paints(X))  -->  [paints].
 
 
-% Some tests
-test1( M)  :-
+% Some tests:
+test1( M) :-
     sentence( M, [john,paints],[]).
-
-test2( M)  :-
+test2( M) :-
     sentence( M, [a, man, paints], []).
-
-test3( M)  :-
+test3( M) :-
     sentence( M, [every,man,that,paints,admires,monet],[]).
-
-test4( M)  :-
+test4( M) :-
     sentence( M, [annie,admires,every,man,that,paints],[]).
-
-test5( M)  :-
+test5( M) :-
     sentence( M, [every,woman,that,admires,a,man,that,paints,likes,monet],[]).
+test6( M) :-
+    sentence( M, [a, man, paints, and, john, paints],[]).
+test7( M) :-
+    sentence( M, [a, man, paints, or, john, paints],[]).
+test8( M) :-
+    sentence( M, [if, a, man, paints, then, every, woman, paints],[]).
