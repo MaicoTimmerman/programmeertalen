@@ -1,3 +1,6 @@
+\documentclass[12pt]{article}
+\usepackage[dutch]{babel}
+
 \title{Prolog Logical Expressions}
 \author{%
     Maico Timmerman\\%
@@ -6,20 +9,18 @@
 
 \date{\today}
 
-\documentclass[12pt]{article}
-
 \begin{document}
 \maketitle
 
 \section{Exercises}
 
-\textbf{Give logical expressions for the follow sentences:}\\
+\textbf{Give logical expressions for the following sentences:}\\
 Mary knows all important artists:\\
-$M = all(X, artists(X), important(X) => knows(mary, X)).$\\
+$M = all(X, artists(X), important(X) => knows(mary, X))$.\\
 \\
 Every teacher who teaches French and studies music understands Chopin\\
 \emph{M = all(X, teacher(X)and teaches(X, french) and studies(X, music) =$>$ understands(X, chopin).}\\
 \\
 A charming lady from Florida runs a beauty shop in Sydney:\\
-\emph{M = exists(X, lady(X) and charming(X) and lives(X, florida) and shop(Y) and beautiful(Y) and from(Y, florida) and runs(X, Y)).}
+\emph{M = exists(X, lady(X) and charming(X) and lives(X, florida) and Y, shop(Y) and beautiful(Y) and from(Y, florida) and runs(X, Y)).}
 \end{document}
