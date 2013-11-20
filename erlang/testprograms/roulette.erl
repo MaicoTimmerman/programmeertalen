@@ -1,6 +1,7 @@
 %roulette.erl
 -module(roulette).
 -export([loop/0]).
+
 %send a number, 1-6
 loop() ->
 	receive
