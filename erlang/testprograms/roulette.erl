@@ -8,4 +8,4 @@ loop() ->
             exit({roulette, die, at, erlang:time()});
         _ ->io: format("click~n"), 
             loop()
-    end.
+end.
