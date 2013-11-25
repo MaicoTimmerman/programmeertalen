@@ -11,13 +11,11 @@
 -export([init/0]).
 
 init() ->
-    % do something.
     Board = digraph:new(),
     add_init_vertices(49, Board),
     erlang:register(player1, spawn(boxes, player, [])),
     erlang:register(player2, spawn(boxes, player, [])),
-    dnb(60,[0,0],Board,player1),
-    player(Board).
+    dnb(60,[0,0],Board,player1).
 
 % Add the last recursive vertex.
 add_init_vertices(1, Board) ->
@@ -40,25 +38,30 @@ test_squaregrade(0, Board) ->
 test_squaregrade(X, Board) ->
     digraph:out_degree(Board, ['$v' | X]) + digraph:out_degree(Board, ['$v' | X]).
 
-% create board and manage fields.
+% Start the boxes and dots game. Send the current player the message that he can make his move
+% and wait for the result of the move.
+% Called recusively till the game runs out of moves.
 dnb(0,Score,_,_) -> 
+    % Game ended and prints score for the current round.
     io:format('Game ended, final score:~n'),
     io:format('Player 1 score: ~p, Player 2 score: ~p',Score);
 
 dnb(X,Score,Board, Player) ->
-    %do something
-    io:format('test'),
+    % Game ongoing and calls dnb() with 1 less turn to go.
     if
         Player == player1 -> NextPlayer = player2;
         Player == player2 -> NextPlayer = player1
     end,
-    Player ! turn,
+    Player ! {Score, Board},
     receive
+        {NewScore,NewBoard} -> 
+            dnb(X-1, NewScore, NewBoard,NextPlayer)
+    end.
 
-    dnb(X-1, NewScore, NewBoard,NextPlayer). 
 
-
-player(Board) ->
-    % manage player AI.
-    io:format('test~n'),
-    digraph:vertices(Board).
+player() ->
+    receive
+        {Score, Board} ->
+            % TODO: Finish player AI.
+            player()
+    end.
