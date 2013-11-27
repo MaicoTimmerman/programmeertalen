@@ -1,4 +1,4 @@
-//
+// 
 // JavaScript Function Plotting
 //
 // This code is from http://www.html5canvastutorials.com/labs/html5-canvas-graphing-an-equation/
@@ -15,9 +15,9 @@ function Graph(config) {
     // user defined properties
     this.canvas = document.getElementById(config.canvasId);
     this.minX = config.minX;
-    this.minY = config.minY;
+    this.minY = config.maxY;
     this.maxX = config.maxX;
-    this.maxY = config.maxY;
+    this.maxY = config.minY;
     this.unitsPerTick = config.unitsPerTick;
 
     // constants
@@ -28,7 +28,7 @@ function Graph(config) {
     // relationships
     this.context = this.canvas.getContext('2d');
     this.rangeX = this.maxX - this.minX;
-    this.rangeY = this.maxY - this.minY;
+    this.rangeY = this.minY - this.maxY;
     this.unitX = this.canvas.width / this.rangeX;
     this.unitY = this.canvas.height / this.rangeY;
     this.centerY = Math.round(Math.abs(this.minY / this.rangeY) * this.canvas.height);
@@ -138,10 +138,7 @@ Graph.prototype.drawEquation = function(equation, color, thickness, xva) {
     context.beginPath();
     context.moveTo(this.minX, equation(this.minX));
 
-
     for(var x = this.minX + this.iteration; x <= this.maxX; x += this.iteration) {
-        console.log("xva: " + xva);
-        console.log("x-xva" + (x - xva));
         if (Math.abs(x - xva) > 0.0001 || xva === undefined)  {
             context.lineTo(x, equation(x));
         }
