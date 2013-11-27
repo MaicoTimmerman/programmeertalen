@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+        <style>
+            body {
+                margin: 50px;
+                padding: 0px;
+            }
+
+        </style>
+        <script src="./jsGraph.js"></script>
+    </head>
+    <body style="">
+        <canvas id="myCanvas" width="600" height="400"></canvas>
+        <script>
+
+            var myGraph = new Graph({
+                canvasId: 'myCanvas',
+                minX: -10,
+                minY: -20,
+                maxX: 10,
+                maxY: 10,
+                unitsPerTick: 1
+            });
+
+            myGraph.drawEquation(function(x) {
+                return 5 * Math.sin(x);
+            }, 'green', 5);
+
+            myGraph.drawEquation(function(x) {
+                return x * x;
+            }, 'blue', 3);
+
+            myGraph.drawEquation(function(x) {
+                return 1 * x;
+            }, 'red', 3);
+
+            myGraph.drawEquation(function(x) { 
+                return 1/(x-3); 
+            }, 'yellow', 5, 3);
+
+        </script>
+
+
+    </body>
+</html>
