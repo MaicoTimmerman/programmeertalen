@@ -129,6 +129,9 @@ Graph.prototype.drawYAxis = function() {
     context.restore();
 };
 
+/* This method draws the equation in the given color and thickness.
+ * Ignores the asymptote xva while drawing
+ */
 Graph.prototype.drawEquation = function(equation, color, thickness, xva) {
     var context = this.context;
     context.save();
@@ -138,8 +141,9 @@ Graph.prototype.drawEquation = function(equation, color, thickness, xva) {
     context.beginPath();
     context.moveTo(this.minX, equation(this.minX));
 
+    /* Actual drawing of the graph */
     for(var x = this.minX + this.iteration; x <= this.maxX; x += this.iteration) {
-        if (Math.abs(x - xva) > 0.0001 || xva === undefined)  {
+        if (Math.abs(x - xva) > 0.00001 || xva === undefined)  {
             context.lineTo(x, equation(x));
         }
         else {
