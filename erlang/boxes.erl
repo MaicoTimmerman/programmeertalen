@@ -41,7 +41,7 @@ test_squaregrade(X, Board) ->
 % Start the boxes and dots game. Send the current player the message that he can make his move
 % and wait for the result of the move.
 % Called recusively till the game runs out of moves.
-dnb(0,Score,_,_) -> 
+dnb(0,Score,_,_) ->
     % Game ended and prints score for the current round.
     io:format('Game ended, final score:~n'),
     io:format('Player 1 score: ~p, Player 2 score: ~p',Score);
@@ -54,7 +54,7 @@ dnb(X,Score,Board, Player) ->
     end,
     Player ! {Score, Board},
     receive
-        {NewScore,NewBoard} -> 
+        {NewScore,NewBoard} ->
             dnb(X-1, NewScore, NewBoard,NextPlayer)
     end.
 
