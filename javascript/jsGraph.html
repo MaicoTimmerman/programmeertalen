@@ -36,9 +36,13 @@
                 return 1 * x;
             }, 'red', 3);
 
-            myGraph.drawEquation(function(x) { 
-                return 1/(x-3); 
-            }, 'yellow', 5, 3);
+            myGraph.drawEquation(function(x) {
+                return 1/(x-3);
+            }, 'black', 2, 3);
+
+            myGraph.plotFunctionAndZero(function(x) {
+                return -1 * (x * x);
+            }, 2, -2, 'yellow', 2);
 
         </script>
 
