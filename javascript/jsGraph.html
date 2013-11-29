@@ -24,25 +24,29 @@
                 unitsPerTick: 1
             });
 
-            myGraph.drawEquation(function(x) {
+            myGraph.plotFunctionAndZero(function(x) {
                 return 5 * Math.sin(x);
-            }, 'green', 5);
+            },2,7, 'green', 5);
 
-            myGraph.drawEquation(function(x) {
+            myGraph.plotFunctionAndZero(function(x) {
                 return x * x;
-            }, 'blue', 3);
+            },-2,2, 'blue', 3);
 
-            myGraph.drawEquation(function(x) {
+            myGraph.plotFunctionAndZero(function(x) {
+                return Math.sqrt(x);
+            },-2,2, 'blue', 3);
+
+            myGraph.plotFunctionAndZero(function(x) {
                 return 1 * x;
-            }, 'red', 3);
+            },-10,10,'red', 3);
 
-            myGraph.drawEquation(function(x) {
+            myGraph.plotFunctionAndZero(function(x) {
                 return 1/(x-3);
-            }, 'black', 2, 3);
+            },-10,10,'black', 2, 3);
 
             myGraph.plotFunctionAndZero(function(x) {
                 return -1 * (x * x);
-            }, 2, -2, 'yellow', 2);
+            },-10,10,'yellow', 2);
 
         </script>
 
