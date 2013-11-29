@@ -5,14 +5,14 @@
  * but removed from the html file itself and put in a .js file. The html file in which we want
  * plot functions should 'include' this file by using the line:
  *   <script src='jsGraph.js'></script>
- * in the <head> ... </head> section of the html file
+ * in the <head> ... </head> section of the html file.
  */
 
-/* Constructor for a Graph canvas*/
+/* Constructor for a Graph canvas. */
 function Graph(config) {
     console.log(this);
 
-    /* user defined properties */
+    /* user defined properties. */
     this.canvas = document.getElementById(config.canvasId);
     this.minX = config.minX;
     this.minY = config.maxY;
@@ -20,12 +20,12 @@ function Graph(config) {
     this.maxY = config.minY;
     this.unitsPerTick = config.unitsPerTick;
 
-    /* constants */
+    /* constants. */
     this.axisColor = '#aaa';
     this.font = '8pt Calibri';
     this.tickSize = 20;
 
-    /* relationships */
+    /* relationships. */
     this.context = this.canvas.getContext('2d');
     this.rangeX = this.maxX - this.minX;
     this.rangeY = this.minY - this.maxY;
@@ -37,13 +37,13 @@ function Graph(config) {
     this.scaleX = this.canvas.width / this.rangeX;
     this.scaleY = this.canvas.height / this.rangeY;
 
-    /* draw x and y axis */
+    /* draw x and y axis. */
     this.drawXAxis();
     this.drawYAxis();
 
 }
 
-/* draw the XAxis with the correct ticks */
+/* Draw the XAxis with the correct ticks. */
 Graph.prototype.drawXAxis = function() {
     var context = this.context;
     context.save();
@@ -54,14 +54,14 @@ Graph.prototype.drawXAxis = function() {
     context.lineWidth = 2;
     context.stroke();
 
-    /* draw tick marks */
+    /* Draw tick marks. */
     var xPosIncrement = this.unitsPerTick * this.unitX;
     var xPos, unit;
     context.font = this.font;
     context.textAlign = 'center';
     context.textBaseline = 'top';
 
-    /* draw left tick marks */
+    /* Draw left tick marks. */
     xPos = this.centerX - xPosIncrement;
     unit = -1 * this.unitsPerTick;
     while(xPos > 0) {
@@ -73,7 +73,7 @@ Graph.prototype.drawXAxis = function() {
         xPos = Math.round(xPos - xPosIncrement);
     }
 
-    // draw right tick marks */
+    /* Draw right tick marks. */
     xPos = this.centerX + xPosIncrement;
     unit = this.unitsPerTick;
     while(xPos < this.canvas.width) {
@@ -87,7 +87,7 @@ Graph.prototype.drawXAxis = function() {
     context.restore();
 };
 
-/* draw the YAxis with the correct ticks */
+/* Draw the YAxis with the correct ticks. */
 Graph.prototype.drawYAxis = function() {
     var context = this.context;
     context.save();
@@ -98,14 +98,14 @@ Graph.prototype.drawYAxis = function() {
     context.lineWidth = 2;
     context.stroke();
 
-    /* draw tick marks */
+    /* Draw tick marks. */
     var yPosIncrement = this.unitsPerTick * this.unitY;
     var yPos, unit;
     context.font = this.font;
     context.textAlign = 'right';
     context.textBaseline = 'middle';
 
-    /* draw top tick marks */
+    /* Draw top tick marks. */
     yPos = this.centerY - yPosIncrement;
     unit = this.unitsPerTick;
     while(yPos > 0) {
@@ -117,7 +117,7 @@ Graph.prototype.drawYAxis = function() {
         yPos = Math.round(yPos - yPosIncrement);
     }
 
-    /* draw bottom tick marks */
+    /* Draw bottom tick marks. */
     yPos = this.centerY + yPosIncrement;
     unit = -1 * this.unitsPerTick;
     while(yPos < this.canvas.height) {
@@ -132,7 +132,7 @@ Graph.prototype.drawYAxis = function() {
 };
 
 /* This method draws the equation in the given color and thickness.
- * Ignores the asymptote xva while drawing
+ * Ignores the asymptote xva while drawing.
  */
 Graph.prototype.drawEquation = function(equation, color, thickness, xva) {
     var context = this.context;
@@ -143,7 +143,7 @@ Graph.prototype.drawEquation = function(equation, color, thickness, xva) {
     context.beginPath();
     context.moveTo(this.minX, equation(this.minX));
 
-    /* Actual drawing of the graph */
+    /* Actual drawing of the graph. */
     for(var x = this.minX + this.iteration; x <= this.maxX; x += this.iteration) {
         if (Math.abs(x - xva) > 0.00001 || xva === undefined)  {
             context.lineTo(x, equation(x));
@@ -161,24 +161,24 @@ Graph.prototype.drawEquation = function(equation, color, thickness, xva) {
     context.restore();
 };
 
-/* Transform the context of the canvas to put the origin in the middle of the canvas */
+/* Transform the context of the canvas to put the origin in the middle of the canvas. */
 Graph.prototype.transformContext = function() {
     var context = this.context;
 
-    /* move context to center of canvas */
+    /* Move context to center of canvas. */
     this.context.translate(this.centerX, this.centerY);
 
     /*
-     * stretch grid to fit the canvas window, and
+     * Stretch grid to fit the canvas window, and
      * invert the y scale so that that increments
-     * as you move upwards
+     * as you move upwards.
      */
     context.scale(this.scaleX, -this.scaleY);
 };
 
 /* Conbined function to plot the graph and find the zero-point between two given values. */
 Graph.prototype.plotFunctionAndZero = function(f,x0,x1,color, thickness, xva) {
-    /* draw the graph, with or without asymptote. */
+    /* Draw the graph, with or without asymptote. */
     if (xva === undefined) {
         this.drawEquation(f, color, thickness, xva);
     }
@@ -190,7 +190,7 @@ Graph.prototype.plotFunctionAndZero = function(f,x0,x1,color, thickness, xva) {
     context.save();
     this.transformContext();
 
-    /* draw the litte crosses at both x */
+    /* Draw the litte crosses at both x. */
     context.beginPath()
     context.moveTo(x0 - 0.1, f(x0) - 0.1);
     context.lineTo(x0 + 0.1, f(x0) + 0.1);
@@ -200,13 +200,38 @@ Graph.prototype.plotFunctionAndZero = function(f,x0,x1,color, thickness, xva) {
     context.lineTo(x1 + 0.1, f(x1) + 0.1);
     context.moveTo(x1 - 0.1, f(x1) + 0.1);
     context.lineTo(x1 + 0.1, f(x1) - 0.1);
-    context.restore();
 
+    /* Draw a circle at the zero point. */
+    var zero = this.getZero(f, x0, x1);
+    context.moveTo(zero, f(zero));
+    context.arc(zero, f(zero), 0.1, 0, Math.PI*2, false);
+
+    context.restore();
     context.lineJoin = "round";
-    context.lineWidth = thickness;
+    context.lineWidth = 1;
     context.strokeStyle = "black";
     context.stroke();
     context.restore();
+}
 
-    // TODO make the dissection circle
+/* Determine the zero point between the two given x. */
+Graph.prototype.getZero = function(f, x0, x1) {
+    var i = 1;
+    var middle;
+    var endA = x0;
+    var endB = x1;
+    while (i <= this.canvas.width) {
+        middle = (endA + endB)/2;
+        if (f(middle) == 0 || Math.abs((endB - endA)/2) < (this.iteration/10)) {
+            return middle;
+        }
+        i = i + 1;
+        /* Check if the sign of x in the middle the same is as the x at endA. */
+        if ((f(middle) && f(middle)/Math.abs(f(middle))) == (f(endA) && f(endA)/Math.abs(f(endA)))) {
+            endA = middle;
+        }
+        else {
+            endB = middle;
+        }
+    }
 }
