@@ -1,12 +1,11 @@
 /*
- * JavaScript Function Plotting
- *
- * This code is from http://www.html5canvastutorials.com/labs/html5-canvas-graphing-an-equation/
- * but removed from the html file itself and put in a .js file. The html file in which we want
- * plot functions should 'include' this file by using the line:
- *   <script src='jsGraph.js'></script>
- * in the <head> ... </head> section of the html file.
+ * Name:    Maico Timmerman
+ * CKNUM:   10542590
+ * 
+ * jsGraph.js:
+ *  This script can draw graphs and determine the zeropoint between an interval.
  */
+
 
 /* Constructor for a Graph canvas. */
 function Graph(config) {
@@ -134,22 +133,31 @@ Graph.prototype.drawYAxis = function() {
 /* This method draws the equation in the given color and thickness.
  * Ignores the asymptote xva while drawing.
  */
-Graph.prototype.drawEquation = function(equation, color, thickness, xva) {
+Graph.prototype.drawEquation = function(f, color, thickness, xva) {
     var context = this.context;
     context.save();
     context.save();
     this.transformContext();
 
     context.beginPath();
-    context.moveTo(this.minX, equation(this.minX));
+    context.moveTo(this.minX, f(this.minX));
 
     /* Actual drawing of the graph. */
+    var nextXva = 0;
     for(var x = this.minX + this.iteration; x <= this.maxX; x += this.iteration) {
-        if (Math.abs(x - xva) > 0.00001 || xva === undefined)  {
-            context.lineTo(x, equation(x));
+        if (xva === undefined || Math.abs(x - xva[nextXva]) > 0.00001)  {
+            context.lineTo(x, f(x));
         }
         else {
-            context.moveTo(xva + this.iteration,equation(xva + this.iteration));
+            /* BUG: the moveTo function works with a list of one asymptote
+             * but using a list with more then 1 asymptote causes both to be
+             * drawn line horizontal lines.
+             * I have no clue whatsoever causes this to happen.
+             */
+            context.moveTo(xva + this.iteration,f(xva + this.iteration));
+            if (nextXva < xva.length -1) {
+                nextXva++;
+            }
         }
     }
 
@@ -179,7 +187,7 @@ Graph.prototype.transformContext = function() {
 /* Conbined function to plot the graph and find the zero-point between two given values. */
 Graph.prototype.plotFunctionAndZero = function(f,x0,x1,color, thickness, xva) {
     /* Draw the graph, with or without asymptote. */
-    if (xva === undefined) {
+    if (xva !== undefined) {
         this.drawEquation(f, color, thickness, xva);
     }
     else {
@@ -222,6 +230,7 @@ Graph.prototype.getZero = function(f, x0, x1) {
     var endB = x1;
     while (i <= this.canvas.width) {
         middle = (endA + endB)/2;
+        /* if the middle is exactly zero or lower then 10*the iteration then the zeropoint is found */
         if (f(middle) == 0 || Math.abs((endB - endA)/2) < (this.iteration/10)) {
             return middle;
         }
