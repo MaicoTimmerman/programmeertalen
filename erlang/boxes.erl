@@ -1,67 +1,133 @@
 %%
-%   Maico Timmerman
-%   Informatica
-%   10542590
 %
-%   Boxes.erl
-%       This program implements the game boxes and dots. A game where 2 players can place
-%       corners to a grid of squares. The goal is to complete more boxes then your opponent.
+% Name: Maico Timmerman
+% Num:  10542590
+%
+% boxes.erl:
+%   This program contains two player who play the dots and boxes game.
+%   The program will run until the board is complete filled.
+%
 %%
 -module(boxes).
--export([init/0]).
+-export([init/2, player/0]).
 
-init() ->
-    Board = digraph:new(),
-    add_init_vertices(49, Board),
-    erlang:register(player1, spawn(boxes, player, [])),
-    erlang:register(player2, spawn(boxes, player, [])),
-    dnb(60,[0,0],Board,player1).
 
-% Add the last recursive vertex.
-add_init_vertices(1, Board) ->
-    digraph:add_vertex(Board);
+% Initialize the board and startup two players which start communicating
+% until the game is completed.
+init(W, H) ->
+    Board = createBoard(W,H),
+    Player1_PID = spawn(boxes, player, []),
+    Player2_PID = spawn(boxes, player, []),
+    io:format("Spawned processes~n"),
+    NewBoard = addLine(Board, 0,0,l),
+    Player1_PID ! {NewBoard, {0,0}, Player2_PID}.
 
-% Add the vertexes recusively. Every vertex counts as a box in the game.
-add_init_vertices(X, Board) ->
-    digraph:add_vertex(Board),
-    add_init_vertices(X-1,Board).
+% Create the board with two arrays, one for horizontal and one for vertical edges.
+createBoard(W,H) ->
+    LinesX = array:new(W * (H + 1), {default,false}),
+    LinesY = array:new(H * (W + 1), {default,false}),
+    io:format("created board~n"),
+    {W, H, LinesX, LinesY}.
 
-% Add an edge between 2 specified vertices, return atom failed if unsuccesful
-% else create the edge.
-add_line(Board, P1, P2) ->
-    digraph:add_edge(Board, ['$v'| P1], ['$v' | P2]).
-
-% Test the grade of a box, 3 means almost full, 4 means full.
-test_squaregrade(0, Board) ->
-    digraph:out_degree(Board, ['$v' | 0]) + digraph:out_degree(Board, ['$v' | 0]);
-
-test_squaregrade(X, Board) ->
-    digraph:out_degree(Board, ['$v' | X]) + digraph:out_degree(Board, ['$v' | X]).
-
-% Start the boxes and dots game. Send the current player the message that he can make his move
-% and wait for the result of the move.
-% Called recusively till the game runs out of moves.
-dnb(0,Score,_,_) ->
-    % Game ended and prints score for the current round.
-    io:format('Game ended, final score:~n'),
-    io:format('Player 1 score: ~p, Player 2 score: ~p',Score);
-
-dnb(X,Score,Board, Player) ->
-    % Game ongoing and calls dnb() with 1 less turn to go.
-    if
-        Player == player1 -> NextPlayer = player2;
-        Player == player2 -> NextPlayer = player1
-    end,
-    Player ! {Score, Board},
-    receive
-        {NewScore,NewBoard} ->
-            dnb(X-1, NewScore, NewBoard,NextPlayer)
+% Add a line to square X,Y on the side(r,l,u,d) given.
+addLine(Board, X, Y, Direction) ->
+    {W, H, LinesX, LinesY} = Board,
+    io:format("Added line: X = ~p, Y = ~p, Direction = ~p~n",[X,Y,Direction]),
+    case Direction of
+        r -> {W,H,array:set((X + 1) + ((W+1)*Y), true, LinesX),LinesY};
+        l -> {W,H,array:set(X + ((W+1)*Y), true, LinesX),LinesY};
+        u -> {W,H,LinesX,array:set(X + (W*Y), true, LinesY)};
+        d -> {W,H,LinesX,array:set(X + (W*(Y+1)), true, LinesY)}
     end.
 
+% Return a tupel of the edges in the format {u,r,d,l}
+getEdges(Board, X, Y) ->
+    {W, H, LinesX, LinesY} = Board,
+    io:format("W: ~p H: ~p~n",[W,H]),
+    % Formulas for accessing the array need to be changed.
+    RightEdge = array:get((X + 1) + ((W+1)*Y), LinesY),
+    LeftEdge = array:get(X + ((W+1)*Y), LinesY),
+    UpEdge = array:get(X + (W*Y), LinesX),
+    DownEdge = array:get(X + (W*(Y+1)), LinesX),
+    {RightEdge, LeftEdge, UpEdge, DownEdge}.
 
+% Swaps the score to send to the next player and adds 1 point to score if Scored is true.
+getNewScore(Score, Scored) ->
+    {OtherPlayerScore, ThisPlayerScore} = Score,
+    case Scored of
+        true ->
+            {ThisPlayerScore + 1, OtherPlayerScore};
+        _ ->
+            {ThisPlayerScore, OtherPlayerScore}
+    end.
+
+% returns the first square found with grade 3.
+checkNextMove(Board, X, Y) ->
+    {W, H, _, _} = Board,
+    case getEdges(Board, X, Y) of
+        {true, false, false, false} ->
+            {{X, Y, r}, true};
+        {false, true, false, false} ->
+            {{X, Y, l}, true};
+        {false, false, true, false} ->
+            {{X, Y, u}, true};
+        {false, false, false, true} ->
+            {{X, Y, d}, true};
+        _ ->
+            case {X,Y} of
+                {0,0} ->
+                    randomNextMove(Board, W, H);
+                {0,_} ->
+                    checkNextMove(Board, W, Y-1);
+                {_,_} ->
+                    checkNextMove(Board, X-1, Y)
+            end
+    end.
+
+% find a random non-filled square.
+randomNextMove(Board, X, Y) ->
+    {W, _, _, _} = Board,
+    case getEdges(Board, X, Y) of
+        {false, _, _, _} ->
+            {{X, Y, r}, false};
+        {_, false, _, _} ->
+            {{X, Y, l}, false};
+        {_, _, false, _} ->
+            {{X, Y, u}, false};
+        {_, _, _, false} ->
+            {{X, Y, d}, false};
+        _ ->
+            case {X,Y} of
+                {0,0} ->
+                    {{-1,-1, finished}, false};
+                {0,_} ->
+                    randomNextMove(Board, W, Y-1);
+                {_,_} ->
+                    randomNextMove(Board, X-1, Y)
+            end
+    end.
+
+% Process of a player. Waits for turn message with new state of the game.
+% Checks his next move, if no more moves send other player atom(finished),
+% else send the other player the new state of the game.
 player() ->
     receive
-        {Score, Board} ->
-            % TODO: Finish player AI.
-            player()
+        {Board, Score, OtherPlayerPID} ->
+            {W, H, _, _} = Board,
+            {OtherPlayerScore, ThisPlayerScore} = Score,
+            {NextMove, Scored} = checkNextMove(Board, W, H),
+            {X, Y, Direction} = NextMove,
+            case Direction of
+                finished ->
+                    io:format("Game finished~n", []),
+                    io:format("Final Score: Player A: ~p, Player B: ~p~n", [OtherPlayerScore, ThisPlayerScore]),
+                    OtherPlayerPID ! finished;
+                _ ->
+                    NewBoard = addLine(Board, X, Y, Direction),
+                    NewScore = getNewScore(Score, Scored),
+                    OtherPlayerPID ! {NewBoard, NewScore, self()},
+                    player()
+            end;
+        finished ->
+            io:format("Thanks for playing!",[])
     end.
