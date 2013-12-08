@@ -145,6 +145,7 @@ Graph.prototype.drawEquation = function(f, color, thickness, xva) {
     /* Actual drawing of the graph. */
     var nextXva = 0;
     for(var x = this.minX + this.iteration; x <= this.maxX; x += this.iteration) {
+        console.log(x);
         if (xva === undefined || Math.abs(x - xva[nextXva]) > 0.00001)  {
             context.lineTo(x, f(x));
         }
@@ -154,7 +155,7 @@ Graph.prototype.drawEquation = function(f, color, thickness, xva) {
              * drawn line horizontal lines.
              * I have no clue whatsoever causes this to happen.
              */
-            context.moveTo(xva + this.iteration,f(xva + this.iteration));
+            context.moveTo(xva + 2*this.iteration,f(xva + 2*this.iteration));
             if (nextXva < xva.length -1) {
                 nextXva++;
             }
