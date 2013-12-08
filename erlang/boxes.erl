@@ -1,5 +1,9 @@
 %%
 %
+% Todo: Indexes are 1 off with the width.
+%
+%%
+%
 % Name: Maico Timmerman
 % Num:  10542590
 %
@@ -24,8 +28,10 @@ init(W, H) ->
 
 % Create the board with two arrays, one for horizontal and one for vertical edges.
 createBoard(W,H) ->
-    LinesX = array:new(W * (H + 1), {default,false}),
-    LinesY = array:new(H * (W + 1), {default,false}),
+    LinesX = array:new(H * (W + 1), {default,false}),
+    LinesY = array:new(W * (H + 1), {default,false}),
+    io:format("ArraySizeX: ~p~n",[(array:size(LinesX))]),
+    io:format("ArraySizeY: ~p~n",[(array:size(LinesY))]),
     io:format("created board~n"),
     {W, H, LinesX, LinesY}.
 
@@ -43,11 +49,18 @@ addLine(Board, X, Y, Direction) ->
 % Return a tupel of the edges in the format {u,r,d,l}
 getEdges(Board, X, Y) ->
     {W, H, LinesX, LinesY} = Board,
-    io:format("W: ~p H: ~p~n",[W,H]),
+    io:format("W: ~p~n",[W]),
+    io:format("H: ~p~n",[H]),
+    io:format("ArraySize Lines X: ~p~n",[(array:size(LinesX))]),
+    io:format("ArraySize Lines Y: ~p~n",[(array:size(LinesY))]),
     % Formulas for accessing the array need to be changed.
+    io:format("RightIndex is ~p~n",[((X + 1) + ((W+1)*Y))]),
     RightEdge = array:get((X + 1) + ((W+1)*Y), LinesY),
+    io:format("LeftEdge Index is ~p~n",[(X + ((W+1)*Y))]),
     LeftEdge = array:get(X + ((W+1)*Y), LinesY),
+    io:format("UpEdge Index is ~p~n",[(X + (W*Y))]),
     UpEdge = array:get(X + (W*Y), LinesX),
+    io:format("DownEdge Index is ~p~n",[(X + (W*(Y+1)))]),
     DownEdge = array:get(X + (W*(Y+1)), LinesX),
     {RightEdge, LeftEdge, UpEdge, DownEdge}.
 
@@ -76,7 +89,7 @@ checkNextMove(Board, X, Y) ->
         _ ->
             case {X,Y} of
                 {0,0} ->
-                    randomNextMove(Board, W, H);
+                    randomNextMove(Board, W-1, H-1);
                 {0,_} ->
                     checkNextMove(Board, W, Y-1);
                 {_,_} ->
