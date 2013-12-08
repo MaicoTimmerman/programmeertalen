@@ -15,7 +15,7 @@ init() ->
     add_init_vertices(49, Board),
     erlang:register(player1, spawn(boxes, player, [])),
     erlang:register(player2, spawn(boxes, player, [])),
-    dnb(60,[0,0],Board,player1).
+    dnb(40,[0,0],Board,player1).
 
 % Add the last recursive vertex.
 add_init_vertices(1, Board) ->
@@ -48,20 +48,26 @@ dnb(0,Score,_,_) ->
 
 dnb(X,Score,Board, Player) ->
     % Game ongoing and calls dnb() with 1 less turn to go.
-    if
-        Player == player1 -> NextPlayer = player2;
-        Player == player2 -> NextPlayer = player1
-    end,
-    Player ! {Score, Board},
-    receive
-        {NewScore,NewBoard} ->
-            dnb(X-1, NewScore, NewBoard,NextPlayer)
+    Player ! {Score, Board, self()},
+    case Player of
+        player1 ->
+            receive
+                {NewScore,NewBoard} ->
+                    dnb(X-1, NewScore, NewBoard,player2)
+            end;
+        player2 ->
+            receive
+                {NewScore,NewBoard} ->
+                    dnb(X-1, NewScore, NewBoard,player1)
+            end
     end.
 
 
 player() ->
     receive
-        {Score, Board} ->
-            % TODO: Finish player AI.
+        {Score, Board, DnbPID} ->
+            [ScoreA , ScoreB | []] = Score,
+            NewBoard = Board,
+            DnbPID ! {[ScoreA,ScoreB], NewBoard},
             player()
     end.
