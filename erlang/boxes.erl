@@ -1,13 +1,11 @@
-%%
-%
 % Name: Maico Timmerman
 % Num:  10542590
 %
 % boxes.erl:
 %   This program contains two player who play the dots and boxes game.
 %   The program will run until the board is complete filled.
-%
-%%
+%   When there is a box with 3 sides drawn the AI will always take the point,
+%   else it will put a random line on the board where there is none.
 -module(boxes).
 -export([init/2, player/0]).
 
@@ -27,6 +25,7 @@ createBoard(W,H) ->
     {W, H, LinesX, LinesY}.
 
 % Add a line to square X,Y on the side(r,l,u,d) given.
+% Prints the line added by a player.
 addLine(Board, X, Y, Direction, Player) ->
     {W, H, LinesX, LinesY} = Board,
     io:format("Player ~p added line: X = ~p, Y = ~p, Direction = ~p~n",[Player,X,Y,Direction]),
@@ -37,7 +36,7 @@ addLine(Board, X, Y, Direction, Player) ->
         d -> {W,H,array:set(X + (W*(Y+1)), true, LinesX),LinesY}
     end.
 
-% Return a tupel of the edges in the format {u,r,d,l}
+% Return a tupel of the edges in the format {r,l,u,d}
 getEdges(Board, X, Y) ->
     {W, _, LinesX, LinesY} = Board,
     RightEdge = array:get((X + 1) + (W*Y), LinesY),
@@ -56,6 +55,8 @@ getNewScore(Score, Scored) ->
             {ThisPlayerScore, OtherPlayerScore}
     end.
 
+% Checks all squares on the board for a non-filled square.
+% Returns false if there is space left, true if board is filled.
 checkBoardFull(Board, X, Y) ->
     {W, _, _, _} = Board,
     case getEdges(Board, X, Y) of
@@ -72,7 +73,8 @@ checkBoardFull(Board, X, Y) ->
             false
     end.
 
-% returns the first square found with grade 3.
+% Returns the first square found with grade 3. else it will return a random next move.
+% If a square with grade 3 is given, scored is true, else false.
 checkNextMove(Board, X, Y) ->
     {W, H, _, _} = Board,
     case checkBoardFull(Board, W-1, H-1) of
@@ -100,13 +102,15 @@ checkNextMove(Board, X, Y) ->
             {{-1,-1, finished}, false}
     end.
 
-% find a random non-filled square.
+% Find a random non-filled square.
 randomNextMove(Board) ->
     {W, H, _, _} = Board,
+    % Set a random seed based on the current system time.
     {A1,A2,A3} = now(),
     random:seed(A1,A2,A3),
     X = random:uniform(W) - 1,
     Y = random:uniform(H) - 1,
+    % Check if edge has empty side, then fill it, else generate next square.
     case getEdges(Board, X, Y) of
         {false, _, _, _} ->
             {{X, Y, r}, false};
@@ -132,9 +136,10 @@ player() ->
             {NextMove, Scored} = checkNextMove(Board, W-1, H-1),
             {X, Y, Direction} = NextMove,
             case Direction of
+                % When finished print scores and winning player.
                 finished ->
-                    io:format("Game finished~n", []),
-                    io:format("Final Score: Player A: ~p, Player B: ~p~n", [OtherPlayerScore, ThisPlayerScore]),
+                    io:format("Game finished~n!", []),
+                    io:format("Final Score:~nPlayer A: ~p, Player B: ~p~n", [OtherPlayerScore, ThisPlayerScore]),
                     case OtherPlayerScore > ThisPlayerScore of
                         true ->
                             io:format("Player A won with ~p points~n",[OtherPlayerScore]);
@@ -142,6 +147,7 @@ player() ->
                             io:format("Player B won with ~p points~n",[ThisPlayerScore])
                     end,
                     OtherPlayerPID ! finished;
+                % Players move on his turn.
                 _ ->
                     NewBoard = addLine(Board, X, Y, Direction, self()),
                     NewScore = getNewScore(Score, Scored),
