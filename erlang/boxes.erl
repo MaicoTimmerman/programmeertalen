@@ -27,9 +27,9 @@ createBoard(W,H) ->
     {W, H, LinesX, LinesY}.
 
 % Add a line to square X,Y on the side(r,l,u,d) given.
-addLine(Board, X, Y, Direction) ->
+addLine(Board, X, Y, Direction, Player) ->
     {W, H, LinesX, LinesY} = Board,
-    io:format("Added line: X = ~p, Y = ~p, Direction = ~p~n",[X,Y,Direction]),
+    io:format("Player ~p added line: X = ~p, Y = ~p, Direction = ~p~n",[Player,X,Y,Direction]),
     case Direction of
         r -> {W,H,LinesX,array:set((X + 1) + (W*Y), true, LinesY)};
         l -> {W,H,LinesX,array:set(X + (W*Y), true, LinesY)};
@@ -39,7 +39,7 @@ addLine(Board, X, Y, Direction) ->
 
 % Return a tupel of the edges in the format {u,r,d,l}
 getEdges(Board, X, Y) ->
-    {W, H, LinesX, LinesY} = Board,
+    {W, _, LinesX, LinesY} = Board,
     RightEdge = array:get((X + 1) + (W*Y), LinesY),
     LeftEdge = array:get(X + (W*Y), LinesY),
     UpEdge = array:get(X + (W*Y), LinesX),
@@ -56,32 +56,57 @@ getNewScore(Score, Scored) ->
             {ThisPlayerScore, OtherPlayerScore}
     end.
 
+checkBoardFull(Board, X, Y) ->
+    {W, _, _, _} = Board,
+    case getEdges(Board, X, Y) of
+        {true,true,true,true} ->
+            case {X,Y} of
+                {0,0} ->
+                    true;
+                {0,_} ->
+                    checkBoardFull(Board, W-1, Y-1);
+                {_,_} ->
+                    checkBoardFull(Board, X-1, Y)
+            end;
+        {_,_,_,_} ->
+            false
+    end.
+
 % returns the first square found with grade 3.
 checkNextMove(Board, X, Y) ->
     {W, H, _, _} = Board,
-    case getEdges(Board, X, Y) of
-        {false, true, true, true} ->
-            {{X, Y, r}, true};
-        {true, false, true, true} ->
-            {{X, Y, l}, true};
-        {true, true, false, true} ->
-            {{X, Y, u}, true};
-        {true, true, true, false} ->
-            {{X, Y, d}, true};
-        _ ->
-            case {X,Y} of
-                {0,0} ->
-                    randomNextMove(Board, W-1, H-1);
-                {0,_} ->
-                    checkNextMove(Board, W-1, Y-1);
-                {_,_} ->
-                    checkNextMove(Board, X-1, Y)
-            end
+    case checkBoardFull(Board, W-1, H-1) of
+        false ->
+            case getEdges(Board, X, Y) of
+                {false, true, true, true} ->
+                    {{X, Y, r}, true};
+                {true, false, true, true} ->
+                    {{X, Y, l}, true};
+                {true, true, false, true} ->
+                    {{X, Y, u}, true};
+                {true, true, true, false} ->
+                    {{X, Y, d}, true};
+                _ ->
+                    case {X,Y} of
+                        {0,0} ->
+                            randomNextMove(Board);
+                        {0,_} ->
+                            checkNextMove(Board, W-1, Y-1);
+                        {_,_} ->
+                            checkNextMove(Board, X-1, Y)
+                    end
+            end;
+        true ->
+            {{-1,-1, finished}, false}
     end.
 
 % find a random non-filled square.
-randomNextMove(Board, X, Y) ->
-    {W, _, _, _} = Board,
+randomNextMove(Board) ->
+    {W, H, _, _} = Board,
+    {A1,A2,A3} = now(),
+    random:seed(A1,A2,A3),
+    X = random:uniform(W) - 1,
+    Y = random:uniform(H) - 1,
     case getEdges(Board, X, Y) of
         {false, _, _, _} ->
             {{X, Y, r}, false};
@@ -91,16 +116,10 @@ randomNextMove(Board, X, Y) ->
             {{X, Y, u}, false};
         {_, _, _, false} ->
             {{X, Y, d}, false};
-        {true, true, true, true} ->
-            case {X,Y} of
-                {0,0} ->
-                    {{-1,-1, finished}, false};
-                {0,_} ->
-                    randomNextMove(Board, W-1, Y-1);
-                {_,_} ->
-                    randomNextMove(Board, X-1, Y)
-            end
+        {true,true,true,true} ->
+            randomNextMove(Board)
     end.
+
 
 % Process of a player. Waits for turn message with new state of the game.
 % Checks his next move, if no more moves send other player atom(finished),
@@ -116,9 +135,15 @@ player() ->
                 finished ->
                     io:format("Game finished~n", []),
                     io:format("Final Score: Player A: ~p, Player B: ~p~n", [OtherPlayerScore, ThisPlayerScore]),
+                    case OtherPlayerScore > ThisPlayerScore of
+                        true ->
+                            io:format("Player A won with ~p points~n",[OtherPlayerScore]);
+                        false ->
+                            io:format("Player B won with ~p points~n",[ThisPlayerScore])
+                    end,
                     OtherPlayerPID ! finished;
                 _ ->
-                    NewBoard = addLine(Board, X, Y, Direction),
+                    NewBoard = addLine(Board, X, Y, Direction, self()),
                     NewScore = getNewScore(Score, Scored),
                     OtherPlayerPID ! {NewBoard, NewScore, self()},
                     player()
