@@ -1,9 +1,5 @@
 %%
 %
-% Todo: Indexes are 1 off with the width.
-%
-%%
-%
 % Name: Maico Timmerman
 % Num:  10542590
 %
@@ -22,17 +18,12 @@ init(W, H) ->
     Board = createBoard(W,H),
     Player1_PID = spawn(boxes, player, []),
     Player2_PID = spawn(boxes, player, []),
-    io:format("Spawned processes~n"),
-    NewBoard = addLine(Board, 0,0,l),
-    Player1_PID ! {NewBoard, {0,0}, Player2_PID}.
+    Player1_PID ! {Board, {0,0}, Player2_PID}.
 
 % Create the board with two arrays, one for horizontal and one for vertical edges.
 createBoard(W,H) ->
-    LinesX = array:new(H * (W + 1), {default,false}),
-    LinesY = array:new(W * (H + 1), {default,false}),
-    io:format("ArraySizeX: ~p~n",[(array:size(LinesX))]),
-    io:format("ArraySizeY: ~p~n",[(array:size(LinesY))]),
-    io:format("created board~n"),
+    LinesY = array:new(H * (W + 1), {default,false}),
+    LinesX = array:new(W * (H + 1), {default,false}),
     {W, H, LinesX, LinesY}.
 
 % Add a line to square X,Y on the side(r,l,u,d) given.
@@ -40,27 +31,18 @@ addLine(Board, X, Y, Direction) ->
     {W, H, LinesX, LinesY} = Board,
     io:format("Added line: X = ~p, Y = ~p, Direction = ~p~n",[X,Y,Direction]),
     case Direction of
-        r -> {W,H,array:set((X + 1) + ((W+1)*Y), true, LinesX),LinesY};
-        l -> {W,H,array:set(X + ((W+1)*Y), true, LinesX),LinesY};
-        u -> {W,H,LinesX,array:set(X + (W*Y), true, LinesY)};
-        d -> {W,H,LinesX,array:set(X + (W*(Y+1)), true, LinesY)}
+        r -> {W,H,LinesX,array:set((X + 1) + (W*Y), true, LinesY)};
+        l -> {W,H,LinesX,array:set(X + (W*Y), true, LinesY)};
+        u -> {W,H,array:set(X + (W*Y), true, LinesX),LinesY};
+        d -> {W,H,array:set(X + (W*(Y+1)), true, LinesX),LinesY}
     end.
 
 % Return a tupel of the edges in the format {u,r,d,l}
 getEdges(Board, X, Y) ->
     {W, H, LinesX, LinesY} = Board,
-    io:format("W: ~p~n",[W]),
-    io:format("H: ~p~n",[H]),
-    io:format("ArraySize Lines X: ~p~n",[(array:size(LinesX))]),
-    io:format("ArraySize Lines Y: ~p~n",[(array:size(LinesY))]),
-    % Formulas for accessing the array need to be changed.
-    io:format("RightIndex is ~p~n",[((X + 1) + ((W+1)*Y))]),
-    RightEdge = array:get((X + 1) + ((W+1)*Y), LinesY),
-    io:format("LeftEdge Index is ~p~n",[(X + ((W+1)*Y))]),
-    LeftEdge = array:get(X + ((W+1)*Y), LinesY),
-    io:format("UpEdge Index is ~p~n",[(X + (W*Y))]),
+    RightEdge = array:get((X + 1) + (W*Y), LinesY),
+    LeftEdge = array:get(X + (W*Y), LinesY),
     UpEdge = array:get(X + (W*Y), LinesX),
-    io:format("DownEdge Index is ~p~n",[(X + (W*(Y+1)))]),
     DownEdge = array:get(X + (W*(Y+1)), LinesX),
     {RightEdge, LeftEdge, UpEdge, DownEdge}.
 
@@ -78,20 +60,20 @@ getNewScore(Score, Scored) ->
 checkNextMove(Board, X, Y) ->
     {W, H, _, _} = Board,
     case getEdges(Board, X, Y) of
-        {true, false, false, false} ->
+        {false, true, true, true} ->
             {{X, Y, r}, true};
-        {false, true, false, false} ->
+        {true, false, true, true} ->
             {{X, Y, l}, true};
-        {false, false, true, false} ->
+        {true, true, false, true} ->
             {{X, Y, u}, true};
-        {false, false, false, true} ->
+        {true, true, true, false} ->
             {{X, Y, d}, true};
         _ ->
             case {X,Y} of
                 {0,0} ->
                     randomNextMove(Board, W-1, H-1);
                 {0,_} ->
-                    checkNextMove(Board, W, Y-1);
+                    checkNextMove(Board, W-1, Y-1);
                 {_,_} ->
                     checkNextMove(Board, X-1, Y)
             end
@@ -109,12 +91,12 @@ randomNextMove(Board, X, Y) ->
             {{X, Y, u}, false};
         {_, _, _, false} ->
             {{X, Y, d}, false};
-        _ ->
+        {true, true, true, true} ->
             case {X,Y} of
                 {0,0} ->
                     {{-1,-1, finished}, false};
                 {0,_} ->
-                    randomNextMove(Board, W, Y-1);
+                    randomNextMove(Board, W-1, Y-1);
                 {_,_} ->
                     randomNextMove(Board, X-1, Y)
             end
@@ -128,7 +110,7 @@ player() ->
         {Board, Score, OtherPlayerPID} ->
             {W, H, _, _} = Board,
             {OtherPlayerScore, ThisPlayerScore} = Score,
-            {NextMove, Scored} = checkNextMove(Board, W, H),
+            {NextMove, Scored} = checkNextMove(Board, W-1, H-1),
             {X, Y, Direction} = NextMove,
             case Direction of
                 finished ->
@@ -142,5 +124,5 @@ player() ->
                     player()
             end;
         finished ->
-            io:format("Thanks for playing!",[])
+            io:format("Thanks for playing!~n",[])
     end.
