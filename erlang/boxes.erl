@@ -74,7 +74,7 @@ checkBoardFull(Board, X, Y) ->
     end.
 
 % Returns the first square found with grade 3. else it will return a random next move.
-% If a square with grade 3 is given, scored is true, else false.
+% If a square with grade 3 is given, Scored is true, else false.
 checkNextMove(Board, X, Y) ->
     {W, H, _, _} = Board,
     case checkBoardFull(Board, W-1, H-1) of
@@ -102,7 +102,7 @@ checkNextMove(Board, X, Y) ->
             {{-1,-1, finished}, false}
     end.
 
-% Find a random non-filled square.
+% Find a random non-filled line at a square.
 randomNextMove(Board) ->
     {W, H, _, _} = Board,
     % Set a random seed based on the current system time.
