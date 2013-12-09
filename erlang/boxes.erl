@@ -138,13 +138,18 @@ player() ->
             case Direction of
                 % When finished print scores and winning player.
                 finished ->
-                    io:format("Game finished~n!", []),
+                    io:format("Game finished!~n", []),
                     io:format("Final Score:~nPlayer A: ~p, Player B: ~p~n", [OtherPlayerScore, ThisPlayerScore]),
                     case OtherPlayerScore > ThisPlayerScore of
                         true ->
                             io:format("Player A won with ~p points~n",[OtherPlayerScore]);
                         false ->
-                            io:format("Player B won with ~p points~n",[ThisPlayerScore])
+                            case OtherPlayerScore == ThisPlayerScore of
+                                true ->
+                                    io:format("Its a draw! Both players had: ~p points~n",[OtherPlayerScore]);
+                                false ->
+                                    io:format("Player B won with ~p points~n",[ThisPlayerScore])
+                            end
                     end,
                     OtherPlayerPID ! finished;
                 % Players move on his turn.
