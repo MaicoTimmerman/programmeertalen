@@ -9,6 +9,7 @@
 module MM where
 
 import Data.List
+import Debug.Trace
 import Control.Monad
 
 data Color = Red | Yellow | Blue | Green | Orange | Purple
@@ -19,18 +20,36 @@ type Pattern = [ Color ]
 -- Amount of back and white pins.
 type Feedback = ( Int, Int)
 
+-- Returns the reaction of the inserted pattern x compared to the
+-- "secret" pattern y in blackpins and whitepins (_,_)
 reaction :: Pattern -> Pattern -> Feedback
-reaction x y = (a, b)
-    where a = whitepins x y
-    where b = blackpins x y
+reaction x y = (blackpins x y, whitepins x y)
 
+-- Return an amount of whitepins in the reaction, which is the number of elements
+-- appearing in both lists minus the blackpins. These are elements on the correct
+-- position.
 whitepins :: Pattern -> Pattern -> Int
-whitepins x y i n = if
+whitepins list1 list2 = 4 - length ( list1 \\ list2 ) - blackpins list1 list2
 
+-- Return the amount of black pins in the reaction, which is the number of elements
+-- that are equal in both lists.
 blackpins :: Pattern -> Pattern -> Int
-blackpins x y i n = if (x !! i) == (y !! i) then blackpins
+blackpins list1 list2 = length ( [ (x,y) | (x,y) <- zip list1 list2, x==y] )
 
+-- Setting some standard variables for the Algorithms
+colors :: [Color]
+colors = [minBound..maxBound]
+store = replicateM 4 colors
 
 -- Naïef algoritme
--- colors :: [Color]
--- colors = [minBound..maxBound]
+naiveAlgorithm :: Pattern -> [Pattern]
+naiveAlgorithm secret = filterOptions secret store []
+
+filterOptions :: Pattern -> [Pattern] -> [Pattern] -> [Pattern]
+filterOptions secret allLeft tries =
+    if reaction secret next == (4,0)
+        then next : tries
+        -- filterOptions secret [ x | x <- store, (reaction x next) /= (reaction secret next)] (next:tries)
+        -- list Comprehension broken.
+        else filterOptions secret [ x | x <- store, (reaction next x) /= (reaction secret next)] (next:tries)
+            where next = (allLeft !! 0)
