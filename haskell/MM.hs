@@ -12,9 +12,11 @@ import Data.List
 import Debug.Trace
 import Control.Monad
 
+-- Specify Color datatype
 data Color = Red | Yellow | Blue | Green | Orange | Purple
     deriving (Eq, Show, Bounded, Enum)
 
+-- type Pattern is a list of colors.
 type Pattern = [ Color ]
 
 -- Amount of back and white pins.
@@ -43,13 +45,24 @@ store = replicateM 4 colors
 
 -- Naïef algoritme
 naiveAlgorithm :: Pattern -> [Pattern]
-naiveAlgorithm secret = filterOptions secret store []
+naiveAlgorithm secret = naiveFilterOptions secret store []
 
-filterOptions :: Pattern -> [Pattern] -> [Pattern] -> [Pattern]
-filterOptions secret allLeft tries =
+-- Filters the options for the naiveAlgorithm, takes the secret, the options left and a list of tries.
+-- When finished gives back a list of tried patterns in reversed order.
+naiveFilterOptions :: Pattern -> [Pattern] -> [Pattern] -> [Pattern]
+naiveFilterOptions secret allLeft tries =
     if reaction secret next == (4,0)
         then next : tries
         -- filterOptions secret [ x | x <- store, (reaction x next) /= (reaction secret next)] (next:tries)
         -- list Comprehension broken.
-        else filterOptions secret [ x | x <- store, (reaction next x) /= (reaction secret next)] (next:tries)
+        else naiveFilterOptions secret [ x | x <- allLeft, (reaction next x) == (reaction secret next)] (next:tries)
             where next = (allLeft !! 0)
+
+naiveAverageSteps :: Float
+naiveAverageSteps =
+    (fromIntegral(naiveTotalTries (replicateM 4 colors) 0)) / (fromIntegral(length (replicateM 4 colors)));
+
+naiveTotalTries :: [Pattern] -> Int -> Int
+naiveTotalTries allLeft total
+    | (length allLeft) == 0 = total
+    | otherwise = naiveTotalTries (tail allLeft) (total + (length (naiveAlgorithm (allLeft !! 0))))
