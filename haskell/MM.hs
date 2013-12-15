@@ -12,7 +12,7 @@ import Data.List
 import Debug.Trace
 import Control.Monad
 
--- Specify Color datatype
+-- Specify Color datatype.
 data Color = Red | Yellow | Blue | Green | Orange | Purple
     deriving (Eq, Show, Bounded, Enum)
 
@@ -23,7 +23,7 @@ type Pattern = [ Color ]
 type Feedback = (Int, Int)
 
 -- Returns the reaction of the inserted pattern x compared to the
--- "secret" pattern y in blackpins and whitepins (_,_)
+-- "secret" pattern y in blackpins and whitepins (_,_).
 reaction :: Pattern -> Pattern -> Feedback
 reaction x y = (blackpins x y, whitepins x y)
 
@@ -38,29 +38,27 @@ whitepins list1 list2 = 4 - length ( list1 \\ list2 ) - blackpins list1 list2
 blackpins :: Pattern -> Pattern -> Int
 blackpins list1 list2 = length ( [ (x,y) | (x,y) <- zip list1 list2, x == y] )
 
--- Setting some standard variables for the Algorithms
+-- Setting some standard variables for the Algorithms:
+-- store is a list of lists with 4 elements with all possible options.
 colors :: [Color]
 colors = [minBound..maxBound]
 store = replicateM 4 colors
 
--- Naïef algoritme
+-- Tests a solving algorithm for the average amount of tries needed to solve the puzzle.
+tester :: (Pattern -> [Pattern]) -> Double
+tester algorithm =
+    (fromIntegral(sum [length (algorithm x) | x  <- store ])) / (fromIntegral(length (store)))
+
+-- Initializer for the Naïef algoritm.
 naiveAlgorithm :: Pattern -> [Pattern]
 naiveAlgorithm secret = naiveFilterOptions secret store []
+
 
 -- Filters the options for the naiveAlgorithm, takes the secret, the options left and a list of tries.
 -- When finished gives back a list of tried patterns in reversed order.
 naiveFilterOptions :: Pattern -> [Pattern] -> [Pattern] -> [Pattern]
-naiveFilterOptions secret allLeft tries =
-    if reaction secret next == (4,0)
-        then next : tries
-        else naiveFilterOptions secret [ x | x <- allLeft, (reaction next x) == (reaction secret next)] (next:tries)
-            where next = (allLeft !! 0)
-
-naiveAverageSteps :: Float
-naiveAverageSteps =
-    (fromIntegral(naiveTotalTries (replicateM 4 colors) 0)) / (fromIntegral(length (replicateM 4 colors)));
-
-naiveTotalTries :: [Pattern] -> Int -> Int
-naiveTotalTries allLeft total
-    | (length allLeft) == 0 = total
-    | otherwise = naiveTotalTries (tail allLeft) (total + (length (naiveAlgorithm (allLeft !! 0))))
+naiveFilterOptions secret allLeft tries
+    | (reaction secret next) == (4,0) = next : tries
+    | otherwise = naiveFilterOptions secret
+        [ x | x <- allLeft, (reaction next x) == (reaction secret next)] (next:tries)
+             where next = (head allLeft)
